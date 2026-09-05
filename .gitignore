@@ -1,4 +1,6 @@
 # 原始数据：DANDI 公开数据，体积大，且可从 DANDI 重新下载（见 README“数据来源”）。
+# 数据放在 raw/ 子目录，整体不入库。
+raw/
 *.nwb
 
 # notebook / python 运行产生的杂项

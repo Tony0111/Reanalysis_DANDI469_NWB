@@ -169,3 +169,9 @@
 - 操作：①新建 `README.md`（项目简介/复现/数据来源/结果摘要）；②新建 `requirements.txt`（bci 环境依赖版本，Python 3.12.13）；③新建 `.gitignore`（排除 `*.nwb` 及 notebook/python 杂项）；④修改 notebook cell 25 去掉两张图的 `savefig` 并移除多余 `import pathlib`，同步修改 cell 26 解说（图仅显示、不存 PNG）；⑤删除已生成的 `fig_3_*.png`、`fig_4_*.png`。
 - 验证：删除 savefig 后 `nbconvert --execute` 全量重跑成功（exit 0），两张图以内嵌输出保留在 cell 25，目录内不再生成 PNG。
 - 安全：改动前已做一次本地备份快照到 `E:/BCI-workstation/tmp/backup_Reanalysis_20260905_152320`。
+
+## 2026-09-05 16:20 +08:00
+
+- 事项：把原始 NWB 数据移入 `raw/` 子目录并使其不入 git。
+- 操作：①新建 `raw/`，把 `sub-20_ses-2_ecephys+image.nwb` 移入；②`.gitignore` 增加 `raw/`；③修改 notebook cell 0 的文件发现逻辑（在项目根目录与 `raw/` 下同时查找 `*.nwb`，DATA_DIR 仍为项目根以正常落盘输出）；④README 更新数据放置路径与文件表。
+- 验证：改后 `nbconvert --execute` 全量重跑成功（exit 0），能从 `raw/` 读到数据，输出仍在项目根。

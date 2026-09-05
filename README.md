@@ -21,7 +21,7 @@
 - DANDI 数据集：`000469`（发布版本 `0.240123.1806`，许可证 CC BY 4.0）
 - 数据论文：Human single-neuron recordings during a working memory task（PMC10796636）
 - 资产路径/文件名：`sub-20_ses-2_ecephys+image.nwb`（约 25,582,000 bytes）
-- 下载后放置：`Reanalysis_DANDI469_NWB/sub-20_ses-2_ecephys+image.nwb`
+- 下载后放置：`raw/sub-20_ses-2_ecephys+image.nwb`（`raw/` 目录整体不入 git）
 
 作者公开代码：https://github.com/rutishauserlab/workingmem-release-NWB
 
@@ -46,7 +46,7 @@
 | `data_dictionary.json` | 字段名到分析名的映射与检查摘要（notebook 自动生成/更新） |
 | `unit_level_statistics.csv` | unit 级统计结果表（notebook 自动生成） |
 | `requirements.txt` | Python 依赖与版本 |
-| `*.nwb`（未提交） | 原始数据，见上方数据来源 |
+| `raw/`（未提交） | 原始数据目录（`.nwb`），见上方数据来源 |
 
 ## 环境与复现
 
@@ -58,7 +58,7 @@ conda create -n bci python=3.12
 conda activate bci
 pip install -r requirements.txt
 
-# 先把 NWB 数据放到本目录（见“数据来源”），再运行 notebook
+# 先把 NWB 数据放到 raw/（见“数据来源”），再运行 notebook
 jupyter nbconvert --to notebook --execute --inplace read_data.ipynb
 ```
 
