@@ -1,0 +1,199 @@
+{
+  "source_file": "sub-20_ses-2_ecephys+image.nwb",
+  "nwb_identifier": "SBID_20_P49CS",
+  "session_start_time": "2017-01-01 00:00:00-08:00",
+  "fields": [
+    {
+      "status": "FOUND",
+      "table": "trials",
+      "column": "start_time",
+      "meaning": "trial 开始时间",
+      "rows": 135,
+      "types": [
+        "float64"
+      ],
+      "missing": 0,
+      "examples": [
+        "np.float64(19.34028875)",
+        "np.float64(27.150785749999997)",
+        "np.float64(35.55065775)"
+      ],
+      "numeric_range": [
+        19.34028875,
+        1179.14938575
+      ],
+      "analysis_name": "trial_start"
+    },
+    {
+      "status": "FOUND",
+      "table": "trials",
+      "column": "stop_time",
+      "meaning": "trial 结束时间",
+      "rows": 135,
+      "types": [
+        "float64"
+      ],
+      "missing": 0,
+      "examples": [
+        "np.float64(27.12431675)",
+        "np.float64(35.53043875)",
+        "np.float64(44.03368575)"
+      ],
+      "numeric_range": [
+        27.12431675,
+        1187.45294475
+      ],
+      "analysis_name": "trial_stop"
+    },
+    {
+      "status": "FOUND",
+      "table": "trials",
+      "column": "timestamps_FixationCross",
+      "meaning": "fixation 注视事件时间",
+      "rows": 135,
+      "types": [
+        "float64"
+      ],
+      "missing": 0,
+      "examples": [
+        "np.float64(19.34028875)",
+        "np.float64(27.150785749999997)",
+        "np.float64(35.55065775)"
+      ],
+      "numeric_range": [
+        19.34028875,
+        1179.14938575
+      ],
+      "analysis_name": "fixation_event"
+    },
+    {
+      "status": "FOUND",
+      "table": "trials",
+      "column": "timestamps_Encoding1",
+      "meaning": "第一张编码图片开始时间",
+      "rows": 135,
+      "types": [
+        "float64"
+      ],
+      "missing": 0,
+      "examples": [
+        "np.float64(20.38491375)",
+        "np.float64(28.38422275)",
+        "np.float64(36.61737575)"
+      ],
+      "numeric_range": [
+        20.38491375,
+        1180.21607275
+      ],
+      "analysis_name": "first_encoding_onset"
+    },
+    {
+      "status": "FOUND",
+      "table": "trials",
+      "column": "timestamps_Encoding1_end",
+      "meaning": "第一张编码图片结束时间",
+      "rows": 135,
+      "types": [
+        "float64"
+      ],
+      "missing": 0,
+      "examples": [
+        "np.float64(21.40141375)",
+        "np.float64(29.400816749999997)",
+        "np.float64(37.63400075)"
+      ],
+      "numeric_range": [
+        21.40141375,
+        1181.23272875
+      ],
+      "analysis_name": "first_encoding_end"
+    },
+    {
+      "status": "FOUND",
+      "table": "units",
+      "column": "spike_times",
+      "meaning": "每个 unit 的 spike 时间数组",
+      "rows": 5,
+      "types": [
+        "ndarray"
+      ],
+      "missing": 0,
+      "examples": [
+        "array([   2.016125  ,    2.43078025,    2.5950615 , ..., 1500.49930425,        1506.392146  , 1508.456895  ], shape=(2255,))",
+        "array([0.00000000e+00, 2.81468750e-01, 4.02562500e-01, ...,        1.49598356e+03, 1.50149787e+03, 1.50326293e+03], shape=(2318,))",
+        "array([2.98062500e-01, 6.31312500e-01, 1.16325000e+00, ...,        1.49904927e+03, 1.50015662e+03, 1.50188612e+03], shape=(2647,))"
+      ],
+      "numeric_range": [
+        0.0,
+        1508.456895
+      ],
+      "analysis_name": "spike_times"
+    },
+    {
+      "status": "FOUND",
+      "table": "units",
+      "column": "electrodes",
+      "meaning": "unit 到 electrodes 表的关联",
+      "rows": 5,
+      "types": [
+        "DataFrame"
+      ],
+      "missing": 0,
+      "examples": [
+        "       x     y      z                               location   filtering  \\ id                                                              ...",
+        "       x      y      z                            location   filtering  \\ id                                                                ...",
+        "       x      y      z                            location   filtering  \\ id                                                                ..."
+      ],
+      "analysis_name": "unit_electrode"
+    },
+    {
+      "status": "FOUND",
+      "table": "electrodes",
+      "column": "location",
+      "meaning": "电极所在的解剖脑区或位置",
+      "rows": 5,
+      "types": [
+        "str"
+      ],
+      "missing": 0,
+      "examples": [
+        "'dorsal_anterior_cingulate_cortex_left'",
+        "'pre_supplementary_motor_area_right'",
+        "'pre_supplementary_motor_area_right'"
+      ],
+      "analysis_name": "region"
+    }
+  ],
+  "unit_to_electrode_location": [
+    {
+      "unit_row": 0,
+      "location": [
+        "dorsal_anterior_cingulate_cortex_left"
+      ]
+    },
+    {
+      "unit_row": 1,
+      "location": [
+        "pre_supplementary_motor_area_right"
+      ]
+    },
+    {
+      "unit_row": 2,
+      "location": [
+        "pre_supplementary_motor_area_right"
+      ]
+    },
+    {
+      "unit_row": 3,
+      "location": [
+        "pre_supplementary_motor_area_right"
+      ]
+    },
+    {
+      "unit_row": 4,
+      "location": [
+        "amygdala_right"
+      ]
+    }
+  ]
+}
