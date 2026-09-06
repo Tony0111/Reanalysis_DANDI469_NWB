@@ -1,0 +1,12 @@
+{
+  "source_file": "sub-21_ses-2_ecephys+image.nwb",
+  "sha256": "57695a90a7d70ee4cf793a1fa58c0102dfa34ac3ee6436311e1f5a9ced21e56a",
+  "subject_id": "21",
+  "session_id": "2",
+  "nwb_identifier": "SBID_21_P51CS",
+  "session_start_time": "2017-01-01 00:00:00-08:00",
+  "n_trials_total": 135,
+  "n_trials_kept": 135,
+  "n_units_total": 20,
+  "n_units_kept": 20
+}

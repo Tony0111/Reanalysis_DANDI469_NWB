@@ -1,0 +1,66 @@
+unit_id,electrodes,clusterID_orig,waveforms_mean_snr,waveforms_peak_snr,waveforms_isolation_distance,spike_count,finite_spikes,increasing_spikes,active_trials,enough_activity,keep,electrode_index,region
+0,"      x     y  ...  group_name origChannel
+id             ...                        
+0   5.8  30.2  ...      micros        10.0
+
+[1 rows x 8 columns]",1880.0,1.1855661426317516,4.786694897019214,,3558,True,True,134,True,True,,
+1,"      x     y  ...  group_name origChannel
+id             ...                        
+1   5.8  30.2  ...      micros        15.0
+
+[1 rows x 8 columns]",1213.0,1.0705040099650391,5.643388913670909,,1676,True,True,135,True,True,,
+2,"      x     y  ...  group_name origChannel
+id             ...                        
+2   5.8  30.2  ...      micros        16.0
+
+[1 rows x 8 columns]",2146.0,1.1190259092732984,5.3767006642310085,,8902,True,True,134,True,True,,
+3,"        x    y  ...  group_name origChannel
+id              ...                        
+3  -21.71  1.7  ...      micros        17.0
+
+[1 rows x 8 columns]",1830.0,1.927569239474491,8.53934405382565,17.259271061795307,383,True,True,111,True,True,,
+4,"        x    y  ...  group_name origChannel
+id              ...                        
+3  -21.71  1.7  ...      micros        17.0
+
+[1 rows x 8 columns]",1908.0,0.8566218690176125,4.839012661426038,,3936,True,True,131,True,True,,
+5,"       x    y  ...  group_name origChannel
+id             ...                        
+4   24.0 -1.9  ...      micros        26.0
+
+[1 rows x 8 columns]",1447.0,0.5327933720070676,2.841235145393027,3542.8482807870764,2044,True,True,118,True,True,,
+6,"       x    y  ...  group_name origChannel
+id             ...                        
+5   24.0 -1.9  ...      micros        28.0
+
+[1 rows x 8 columns]",2372.0,0.8883223158149693,4.067621280390254,14.524668765934022,2810,True,True,125,True,True,,
+7,"       x    y  ...  group_name origChannel
+id             ...                        
+5   24.0 -1.9  ...      micros        28.0
+
+[1 rows x 8 columns]",2393.0,0.9920560201140449,4.816520630581714,,18599,True,True,135,True,True,,
+8,"       x    y  ...  group_name origChannel
+id             ...                        
+5   24.0 -1.9  ...      micros        28.0
+
+[1 rows x 8 columns]",2174.0,1.2803026687401282,7.792411950804107,19.80639587995067,329,True,True,82,True,True,,
+9,"      x     y  ...  group_name origChannel
+id             ...                        
+6  -3.0  14.2  ...      micros        52.0
+
+[1 rows x 8 columns]",1756.0,0.8666543414621888,4.031603204317299,225.32159767577153,720,True,True,117,True,True,,
+10,"      x     y  ...  group_name origChannel
+id             ...                        
+6  -3.0  14.2  ...      micros        52.0
+
+[1 rows x 8 columns]",1771.0,2.399202780412391,9.742421790350338,321.9279758446161,3101,True,True,135,True,True,,
+11,"      x     y  ...  group_name origChannel
+id             ...                        
+7  -3.0  14.2  ...      micros        54.0
+
+[1 rows x 8 columns]",2355.0,1.94727716417167,9.362183443243437,384.8121268240665,803,True,True,117,True,True,,
+12,"      x     y  ...  group_name origChannel
+id             ...                        
+7  -3.0  14.2  ...      micros        54.0
+
+[1 rows x 8 columns]",2177.0,1.1594246275776092,4.988875874746221,73.61479370971533,649,True,True,118,True,True,,

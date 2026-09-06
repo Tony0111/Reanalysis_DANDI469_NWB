@@ -1,0 +1,5 @@
+file_name,subject_id,session_id,n_trials_kept,n_units_kept,significant_units_q05,mean_test_selected_minus_other_hz
+sub-1_ses-2_ecephys+image.nwb,1,2,135,40,0,0.18119692807192805
+sub-11_ses-2_ecephys+image.nwb,11,2,135,74,1,0.14503697316197317
+sub-20_ses-2_ecephys+image.nwb,20,2,135,5,0,-0.08891733266733268
+sub-21_ses-2_ecephys+image.nwb,21,2,135,20,1,0.37871971778221775

@@ -1,0 +1,12 @@
+{
+  "purpose": "Exploratory precheck only; no picture-selectivity test was run.",
+  "source_field": "loadsEnc1_PicIDs",
+  "sessions": [
+    "sub-1_ses-2_ecephys+image.nwb",
+    "sub-11_ses-2_ecephys+image.nwb",
+    "sub-20_ses-2_ecephys+image.nwb",
+    "sub-21_ses-2_ecephys+image.nwb"
+  ],
+  "counts_file": "encoding1_picid_counts.csv",
+  "summary_file": "encoding1_picid_summary.csv"
+}

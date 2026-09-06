@@ -1,0 +1,29 @@
+Python: D:\AI\miniconda_envs\bci-plot\python.exe
+Conda environment: D:\AI\miniconda_envs\bci-plot
+Log: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\plot_runs\representative_plots_20260906_143110+0800.log
+
+START: sub-1_ses-2_ecephys+image.nwb
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-1_ses-2\figures\unit_0_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-1_ses-2\figures\unit_20_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-1_ses-2\figures\unit_39_raster_psth.png
+PASS: sub-1_ses-2_ecephys+image.nwb
+
+START: sub-11_ses-2_ecephys+image.nwb
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-11_ses-2\figures\unit_0_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-11_ses-2\figures\unit_37_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-11_ses-2\figures\unit_73_raster_psth.png
+PASS: sub-11_ses-2_ecephys+image.nwb
+
+START: sub-20_ses-2_ecephys+image.nwb
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-20_ses-2\figures\unit_0_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-20_ses-2\figures\unit_2_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-20_ses-2\figures\unit_4_raster_psth.png
+PASS: sub-20_ses-2_ecephys+image.nwb
+
+START: sub-21_ses-2_ecephys+image.nwb
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-21_ses-2\figures\unit_0_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-21_ses-2\figures\unit_10_raster_psth.png
+saved: E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB\results\primary-v1\sub-21_ses-2\figures\unit_19_raster_psth.png
+PASS: sub-21_ses-2_ecephys+image.nwb
+
+ALL COMPATIBLE SESSIONS PASSED

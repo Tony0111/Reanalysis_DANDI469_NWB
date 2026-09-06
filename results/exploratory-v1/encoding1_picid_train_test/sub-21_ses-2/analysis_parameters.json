@@ -1,0 +1,11 @@
+{
+  "analysis_type": "exploratory held-out Encoding1 picture-ID test",
+  "source_picture_id_column": "loadsEnc1_PicIDs",
+  "split_seed": 20260906,
+  "permutation_seed": 20260907,
+  "permutations": 10000,
+  "fdr_q_threshold": 0.05,
+  "candidate_selection": "largest train-trial mean response-minus-baseline rate",
+  "held_out_test": "selected picture versus all other pictures, one-sided",
+  "warning": "Exploratory result; it does not modify primary-v1."
+}

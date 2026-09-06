@@ -1,0 +1,5 @@
+subject_id,sessions_analyzed,trials_kept,units_kept,significant_units_q05,mean_of_session_effects_hz
+1,1,135,40,0,-0.19583333333333333
+11,1,135,74,14,0.11048548548548545
+20,1,135,5,0,0.06481481481481478
+21,1,135,20,0,-0.08472222222222221

@@ -1,0 +1,53 @@
+{
+  "source_file": "sub-2_ses-2_ecephys+image.nwb",
+  "sha256": "68ebec17318c8ed82c42cc35a0f6e3c0cef5bb7c26482cd9b965f9d500cb990a",
+  "subject_id": "2",
+  "session_id": "2",
+  "nwb_identifier": "SBID_2_P43CS",
+  "session_start_time": "2016-01-01 00:00:00-08:00",
+  "n_trials_total": 135,
+  "n_trials_kept": 135,
+  "n_units_total": 32,
+  "n_units_kept": 31,
+  "n_electrodes_total": 15,
+  "trial_columns": [
+    "loads",
+    "loadsEnc1_PicIDs",
+    "loadsEnc2_PicIDs",
+    "loadsEnc3_PicIDs",
+    "loadsProbe_PicIDs",
+    "start_time",
+    "stop_time",
+    "timestamps_FixationCross",
+    "timestamps_Encoding1",
+    "timestamps_Encoding1_end",
+    "timestamps_Encoding2",
+    "timestamps_Encoding2_end",
+    "timestamps_Encoding3",
+    "timestamps_Encoding3_end",
+    "timestamps_Maintenance",
+    "timestamps_Probe",
+    "timestamps_Response",
+    "response_accuracy",
+    "probe_in_out"
+  ],
+  "unit_columns": [
+    "spike_times",
+    "electrodes",
+    "clusterID_orig",
+    "waveforms_mean_snr",
+    "waveforms_peak_snr",
+    "waveforms_isolation_distance",
+    "waveforms_mean_proj_dist"
+  ],
+  "electrode_columns": [
+    "x",
+    "y",
+    "z",
+    "location",
+    "filtering",
+    "group",
+    "group_name",
+    "origChannel"
+  ]
+}

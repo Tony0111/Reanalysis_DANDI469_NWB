@@ -1,0 +1,18 @@
+{
+  "session_key": "sub-14_ses-1",
+  "file_name": "sub-14_ses-1_ecephys+image.nwb",
+  "relative_path": "raw\\all\\000469\\sub-14\\sub-14_ses-1_ecephys+image.nwb",
+  "subject_id": 14,
+  "session_id": 1,
+  "status": "excluded_incompatible_schema",
+  "reason_code": "missing_primary_event_schema",
+  "message": "Excluded before numerical analysis; missing required fields: timestamps_FixationCross;timestamps_Encoding1;timestamps_Encoding1_end",
+  "started_at": "2026-09-06T18:04:57+08:00",
+  "finished_at": "",
+  "duration_seconds": 0.0,
+  "n_trials_total": "",
+  "n_trials_kept": "",
+  "n_units_total": "",
+  "n_units_kept": "",
+  "significant_units_q05": ""
+}

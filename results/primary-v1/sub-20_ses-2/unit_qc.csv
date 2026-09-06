@@ -1,0 +1,26 @@
+unit_id,electrodes,clusterID_orig,waveforms_mean_snr,waveforms_peak_snr,waveforms_isolation_distance,spike_count,finite_spikes,increasing_spikes,active_trials,enough_activity,keep,electrode_index,region
+0,"       x     y  ...  group_name origChannel
+id              ...                        
+0  -8.72  34.1  ...      micros         7.0
+
+[1 rows x 8 columns]",1578.0,0.8429630698005722,3.738961261090098,,2255,True,True,133,True,True,,
+1,"       x      y  ...  group_name origChannel
+id               ...                        
+1   6.86  26.19  ...      micros        41.0
+
+[1 rows x 8 columns]",762.0,0.662955911123187,4.133044950133095,,2318,True,True,128,True,True,,
+2,"       x      y  ...  group_name origChannel
+id               ...                        
+2   6.86  26.19  ...      micros        47.0
+
+[1 rows x 8 columns]",903.0,0.7099526617928493,4.412684308840746,,2647,True,True,131,True,True,,
+3,"       x      y  ...  group_name origChannel
+id               ...                        
+3   6.86  26.19  ...      micros        48.0
+
+[1 rows x 8 columns]",1032.0,0.8875143677463,3.9652962495338575,,2585,True,True,134,True,True,,
+4,"        x     y  ...  group_name origChannel
+id               ...                        
+4   20.23 -2.98  ...      micros        54.0
+
+[1 rows x 8 columns]",1625.0,1.32281755348544,5.959231645528385,18.150095447019854,1454,True,True,89,True,True,,

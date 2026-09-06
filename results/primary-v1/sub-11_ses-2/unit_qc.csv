@@ -1,0 +1,371 @@
+unit_id,electrodes,clusterID_orig,waveforms_mean_snr,waveforms_peak_snr,waveforms_isolation_distance,spike_count,finite_spikes,increasing_spikes,active_trials,enough_activity,keep,electrode_index,region
+0,"      x     y  ...  group_name origChannel
+id             ...                        
+0  -8.0  37.0  ...      micros         5.0
+
+[1 rows x 8 columns]",1451.0,3.197812342609354,12.5785462600886,13.2239753776656,282,True,True,96,True,True,,
+1,"      x     y  ...  group_name origChannel
+id             ...                        
+0  -8.0  37.0  ...      micros         5.0
+
+[1 rows x 8 columns]",1372.0,2.0007281797283536,7.673922726717904,15.15085201368822,1479,True,True,135,True,True,,
+2,"      x     y  ...  group_name origChannel
+id             ...                        
+0  -8.0  37.0  ...      micros         5.0
+
+[1 rows x 8 columns]",1439.0,1.2000164669080724,5.152823466920711,11.476780740982424,2010,True,True,135,True,True,,
+3,"      x     y  ...  group_name origChannel
+id             ...                        
+1  -8.0  37.0  ...      micros         6.0
+
+[1 rows x 8 columns]",816.0,0.6692197692941657,3.716603066710997,,2201,True,True,135,True,True,,
+4,"      x     y  ...  group_name origChannel
+id             ...                        
+2   4.0  35.7  ...      micros         9.0
+
+[1 rows x 8 columns]",1454.0,3.353674152243007,14.142229804422183,,7821,True,True,135,True,True,,
+5,"      x     y  ...  group_name origChannel
+id             ...                        
+2   4.0  35.7  ...      micros         9.0
+
+[1 rows x 8 columns]",1424.0,1.2894333680798122,5.23398063606125,140.7256679138196,2930,True,True,135,True,True,,
+6,"      x     y  ...  group_name origChannel
+id             ...                        
+3   4.0  35.7  ...      micros        10.0
+
+[1 rows x 8 columns]",2800.0,1.4325328228157344,5.5387304760574425,,18007,True,True,135,True,True,,
+7,"      x     y  ...  group_name origChannel
+id             ...                        
+3   4.0  35.7  ...      micros        10.0
+
+[1 rows x 8 columns]",2785.0,2.2671325704956056,7.776826136653703,15.09655473737572,2378,True,True,134,True,True,,
+8,"      x     y  ...  group_name origChannel
+id             ...                        
+4   4.0  35.7  ...      micros        11.0
+
+[1 rows x 8 columns]",3143.0,2.407873724909448,9.060969945059565,6.778650609075151,513,True,True,127,True,True,,
+9,"      x     y  ...  group_name origChannel
+id             ...                        
+4   4.0  35.7  ...      micros        11.0
+
+[1 rows x 8 columns]",3183.0,1.7879528156843312,6.553754696351451,6.233589668364924,1622,True,True,135,True,True,,
+10,"      x     y  ...  group_name origChannel
+id             ...                        
+4   4.0  35.7  ...      micros        11.0
+
+[1 rows x 8 columns]",3220.0,1.424726599920274,5.698839517193101,,31383,True,True,135,True,True,,
+11,"      x     y  ...  group_name origChannel
+id             ...                        
+5   4.0  35.7  ...      micros        12.0
+
+[1 rows x 8 columns]",1992.0,1.0002787019626487,4.0895194183371775,13.441907014318819,1686,True,True,134,True,True,,
+12,"      x     y  ...  group_name origChannel
+id             ...                        
+5   4.0  35.7  ...      micros        12.0
+
+[1 rows x 8 columns]",2106.0,1.7433988388039336,6.75795977209913,,12549,True,True,135,True,True,,
+13,"      x     y  ...  group_name origChannel
+id             ...                        
+5   4.0  35.7  ...      micros        12.0
+
+[1 rows x 8 columns]",2102.0,2.411603424302755,8.599857894012354,6.987244719210853,1172,True,True,129,True,True,,
+14,"      x     y  ...  group_name origChannel
+id             ...                        
+5   4.0  35.7  ...      micros        12.0
+
+[1 rows x 8 columns]",2062.0,3.4301553561268334,12.724594798258435,23.59905913210539,309,True,True,75,True,True,,
+15,"      x     y  ...  group_name origChannel
+id             ...                        
+6   4.0  35.7  ...      micros        13.0
+
+[1 rows x 8 columns]",3348.0,1.09238522557004,4.6137473273224705,,22060,True,True,135,True,True,,
+16,"      x     y  ...  group_name origChannel
+id             ...                        
+7   4.0  35.7  ...      micros        15.0
+
+[1 rows x 8 columns]",1905.0,2.2990773363912282,8.950465907501862,1740.1391248115635,7148,True,True,135,True,True,,
+17,"      x     y  ...  group_name origChannel
+id             ...                        
+7   4.0  35.7  ...      micros        15.0
+
+[1 rows x 8 columns]",1864.0,1.3691143580597993,5.218646052378018,31.186015656642073,6413,True,True,135,True,True,,
+18,"      x     y  ...  group_name origChannel
+id             ...                        
+8   4.0  35.7  ...      micros        16.0
+
+[1 rows x 8 columns]",2235.0,1.7049496597349083,7.229157043598577,57.53847793008771,8754,True,True,135,True,True,,
+19,"      x     y  ...  group_name origChannel
+id             ...                        
+8   4.0  35.7  ...      micros        16.0
+
+[1 rows x 8 columns]",2240.0,1.0626026522702245,4.687236168215573,,10913,True,True,135,True,True,,
+20,"       x    y  ...  group_name origChannel
+id             ...                        
+9  -20.0 -1.7  ...      micros        19.0
+
+[1 rows x 8 columns]",2553.0,2.2520991516422684,10.121055506289828,13.74664899934108,3412,True,True,135,True,True,,
+21,"       x    y  ...  group_name origChannel
+id             ...                        
+9  -20.0 -1.7  ...      micros        19.0
+
+[1 rows x 8 columns]",2556.0,3.083368723119651,14.463716775859673,49.95992641209839,4267,True,True,134,True,True,,
+22,"       x    y  ...  group_name origChannel
+id             ...                        
+10 -20.0 -1.7  ...      micros        20.0
+
+[1 rows x 8 columns]",1424.0,1.0720238806532878,6.085743823901597,798.288166998396,1443,True,True,130,True,True,,
+23,"       x    y  ...  group_name origChannel
+id             ...                        
+11 -20.0 -1.7  ...      micros        21.0
+
+[1 rows x 8 columns]",2229.0,3.0220997598360855,11.566439022592546,14.188099459604572,734,True,True,120,True,True,,
+24,"       x    y  ...  group_name origChannel
+id             ...                        
+11 -20.0 -1.7  ...      micros        21.0
+
+[1 rows x 8 columns]",2250.0,2.154810166819422,7.628723237180975,30.939266277261172,3959,True,True,135,True,True,,
+25,"       x    y  ...  group_name origChannel
+id             ...                        
+12 -20.0 -1.7  ...      micros        22.0
+
+[1 rows x 8 columns]",1845.0,3.21368236138026,14.587938155741842,24.300862626785545,355,True,True,112,True,True,,
+26,"       x     y  ...  group_name origChannel
+id              ...                        
+13 -20.0 -19.7  ...      micros        35.0
+
+[1 rows x 8 columns]",3216.0,0.8632746625868638,4.870307979103675,,6742,True,True,135,True,True,,
+27,"       x     y  ...  group_name origChannel
+id              ...                        
+13 -20.0 -19.7  ...      micros        35.0
+
+[1 rows x 8 columns]",3207.0,1.3222674641035643,5.365122984822055,7.61726795658111,589,True,True,108,True,True,,
+28,"       x     y  ...  group_name origChannel
+id              ...                        
+14 -20.0 -19.7  ...      micros        36.0
+
+[1 rows x 8 columns]",3269.0,0.7219175554979907,4.028372137885339,8.317762649947731,1204,True,True,115,True,True,,
+29,"       x     y  ...  group_name origChannel
+id              ...                        
+14 -20.0 -19.7  ...      micros        36.0
+
+[1 rows x 8 columns]",3231.0,0.9864972700661415,4.8343834966142545,,7149,True,True,135,True,True,,
+30,"       x     y  ...  group_name origChannel
+id              ...                        
+15 -20.0 -19.7  ...      micros        37.0
+
+[1 rows x 8 columns]",4431.0,1.8390571827540385,7.69411064812032,16.86627966630412,3516,True,True,135,True,True,,
+31,"       x     y  ...  group_name origChannel
+id              ...                        
+15 -20.0 -19.7  ...      micros        37.0
+
+[1 rows x 8 columns]",4402.0,1.9449299126406236,10.756103197814964,10.199454085050446,416,True,True,112,True,True,,
+32,"       x     y  ...  group_name origChannel
+id              ...                        
+15 -20.0 -19.7  ...      micros        37.0
+
+[1 rows x 8 columns]",2672.0,2.861619605274034,13.851977395731605,16.303299138856612,581,True,True,104,True,True,,
+33,"       x     y  ...  group_name origChannel
+id              ...                        
+15 -20.0 -19.7  ...      micros        37.0
+
+[1 rows x 8 columns]",773.0,3.3359279388439353,20.88531758630753,98.92079168450832,590,True,True,115,True,True,,
+34,"       x     y  ...  group_name origChannel
+id              ...                        
+16 -20.0 -19.7  ...      micros        38.0
+
+[1 rows x 8 columns]",2213.0,2.0083548576447416,9.881611781516584,8.379937101353667,674,True,True,119,True,True,,
+35,"       x     y  ...  group_name origChannel
+id              ...                        
+16 -20.0 -19.7  ...      micros        38.0
+
+[1 rows x 8 columns]",2575.0,3.1814098585988946,14.580020800349624,17.76397905907696,318,True,True,85,True,True,,
+36,"       x     y  ...  group_name origChannel
+id              ...                        
+16 -20.0 -19.7  ...      micros        38.0
+
+[1 rows x 8 columns]",2151.0,5.355459674096392,25.626485511023706,84.04980113201977,867,True,True,126,True,True,,
+37,"       x     y  ...  group_name origChannel
+id              ...                        
+16 -20.0 -19.7  ...      micros        38.0
+
+[1 rows x 8 columns]",2424.0,7.895123110028374,39.31914502957647,43.229532851156655,300,True,True,102,True,True,,
+38,"       x     y  ...  group_name origChannel
+id              ...                        
+17 -20.0 -19.7  ...      micros        39.0
+
+[1 rows x 8 columns]",3357.0,1.0016925272104547,5.046556777423109,48.2644512989556,2970,True,True,125,True,True,,
+39,"       x     y  ...  group_name origChannel
+id              ...                        
+17 -20.0 -19.7  ...      micros        39.0
+
+[1 rows x 8 columns]",3189.0,2.1490250670530404,8.654069710591326,21.125219213856383,2165,True,True,135,True,True,,
+40,"       x     y  ...  group_name origChannel
+id              ...                        
+17 -20.0 -19.7  ...      micros        39.0
+
+[1 rows x 8 columns]",2679.0,3.394677990222601,13.995598667430711,17.607504643650532,1703,True,True,132,True,True,,
+41,"       x     y  ...  group_name origChannel
+id              ...                        
+17 -20.0 -19.7  ...      micros        39.0
+
+[1 rows x 8 columns]",3138.0,2.5366275494718695,14.802516720127448,48.47442252135794,340,True,True,95,True,True,,
+42,"       x     y  ...  group_name origChannel
+id              ...                        
+17 -20.0 -19.7  ...      micros        39.0
+
+[1 rows x 8 columns]",3207.0,4.712903285862673,19.72034047625505,26.291251526148645,362,True,True,114,True,True,,
+43,"       x     y  ...  group_name origChannel
+id              ...                        
+18 -20.0 -19.7  ...      micros        40.0
+
+[1 rows x 8 columns]",2515.0,0.7706297205762661,3.986488096539866,,4485,True,True,135,True,True,,
+44,"       x     y  ...  group_name origChannel
+id              ...                        
+18 -20.0 -19.7  ...      micros        40.0
+
+[1 rows x 8 columns]",2456.0,1.4661941075825817,7.165087810837789,17.232464148860583,1762,True,True,132,True,True,,
+45,"       x     y  ...  group_name origChannel
+id              ...                        
+19  23.0 -36.9  ...      micros        44.0
+
+[1 rows x 8 columns]",425.0,0.9080784291804528,4.553702916522196,,1255,True,True,135,True,True,,
+46,"      x     y  ...  group_name origChannel
+id             ...                        
+20 -6.0  18.3  ...      micros        49.0
+
+[1 rows x 8 columns]",1567.0,1.2832272777856273,5.023691244543353,149.49123654509125,1905,True,True,135,True,True,,
+47,"      x     y  ...  group_name origChannel
+id             ...                        
+20 -6.0  18.3  ...      micros        49.0
+
+[1 rows x 8 columns]",1578.0,1.7881176667899634,5.346940168837308,10.777949742778459,604,True,True,132,True,True,,
+48,"      x     y  ...  group_name origChannel
+id             ...                        
+20 -6.0  18.3  ...      micros        49.0
+
+[1 rows x 8 columns]",1761.0,1.7902042207627444,5.617028451774795,1185.5122692207708,3738,True,True,135,True,True,,
+49,"      x     y  ...  group_name origChannel
+id             ...                        
+21 -6.0  18.3  ...      micros        50.0
+
+[1 rows x 8 columns]",1305.0,1.523870036379578,4.7954620932342795,18.147670595312828,1078,True,True,135,True,True,,
+50,"      x     y  ...  group_name origChannel
+id             ...                        
+21 -6.0  18.3  ...      micros        50.0
+
+[1 rows x 8 columns]",1348.0,1.1735262124516872,3.848227639076188,660.0415908395348,2396,True,True,135,True,True,,
+51,"      x     y  ...  group_name origChannel
+id             ...                        
+21 -6.0  18.3  ...      micros        50.0
+
+[1 rows x 8 columns]",1366.0,1.3555288279935993,5.1762465360256185,,4654,True,True,135,True,True,,
+52,"      x     y  ...  group_name origChannel
+id             ...                        
+22 -6.0  18.3  ...      micros        51.0
+
+[1 rows x 8 columns]",3464.0,1.4747186530640697,5.39938324504426,1907.5973747084563,1472,True,True,132,True,True,,
+53,"      x     y  ...  group_name origChannel
+id             ...                        
+22 -6.0  18.3  ...      micros        51.0
+
+[1 rows x 8 columns]",3063.0,1.3814951897050523,5.200872885346194,,1870,True,True,135,True,True,,
+54,"      x     y  ...  group_name origChannel
+id             ...                        
+23 -6.0  18.3  ...      micros        52.0
+
+[1 rows x 8 columns]",1510.0,4.711022193766089,17.157457548038018,130.82395576786968,4391,True,True,135,True,True,,
+55,"      x     y  ...  group_name origChannel
+id             ...                        
+23 -6.0  18.3  ...      micros        52.0
+
+[1 rows x 8 columns]",1628.0,2.72222797992246,13.031136112335306,35.80064763684116,822,True,True,122,True,True,,
+56,"      x     y  ...  group_name origChannel
+id             ...                        
+23 -6.0  18.3  ...      micros        52.0
+
+[1 rows x 8 columns]",1638.0,2.4210686590441126,8.629582255360479,56.13950295165942,5795,True,True,135,True,True,,
+57,"      x     y  ...  group_name origChannel
+id             ...                        
+23 -6.0  18.3  ...      micros        52.0
+
+[1 rows x 8 columns]",1639.0,1.4542200143715593,5.757200908664917,31.874838142914538,5622,True,True,135,True,True,,
+58,"      x     y  ...  group_name origChannel
+id             ...                        
+24 -6.0  18.3  ...      micros        53.0
+
+[1 rows x 8 columns]",1630.0,3.263921014936859,11.938270279195148,23.410538621779846,913,True,True,130,True,True,,
+59,"      x     y  ...  group_name origChannel
+id             ...                        
+24 -6.0  18.3  ...      micros        53.0
+
+[1 rows x 8 columns]",1795.0,1.9531902883914922,5.971654696455502,7.7812733955671325,707,True,True,132,True,True,,
+60,"      x     y  ...  group_name origChannel
+id             ...                        
+24 -6.0  18.3  ...      micros        53.0
+
+[1 rows x 8 columns]",1935.0,1.9672514868078685,6.500720517589066,,6890,True,True,135,True,True,,
+61,"      x     y  ...  group_name origChannel
+id             ...                        
+24 -6.0  18.3  ...      micros        53.0
+
+[1 rows x 8 columns]",1954.0,1.3078036332895693,4.974982019201355,1009.9369369785347,2278,True,True,135,True,True,,
+62,"      x     y  ...  group_name origChannel
+id             ...                        
+25 -6.0  18.3  ...      micros        54.0
+
+[1 rows x 8 columns]",3936.0,0.8322914252667264,4.457150004872056,38.6759580410809,9934,True,True,135,True,True,,
+63,"      x     y  ...  group_name origChannel
+id             ...                        
+25 -6.0  18.3  ...      micros        54.0
+
+[1 rows x 8 columns]",3920.0,1.6762920748753616,5.709660200635364,,14219,True,True,135,True,True,,
+64,"      x     y  ...  group_name origChannel
+id             ...                        
+25 -6.0  18.3  ...      micros        54.0
+
+[1 rows x 8 columns]",3135.0,1.3813789173897617,5.375566536945336,1128.1824963737847,1835,True,True,135,True,True,,
+65,"      x     y  ...  group_name origChannel
+id             ...                        
+26 -6.0  18.3  ...      micros        55.0
+
+[1 rows x 8 columns]",1603.0,2.861230735722231,10.69949353440836,37.80552666029453,1333,True,True,130,True,True,,
+66,"      x     y  ...  group_name origChannel
+id             ...                        
+26 -6.0  18.3  ...      micros        55.0
+
+[1 rows x 8 columns]",1628.0,1.7924910997987218,6.972926371432025,31.670080852665116,1448,True,True,135,True,True,,
+67,"      x     y  ...  group_name origChannel
+id             ...                        
+26 -6.0  18.3  ...      micros        55.0
+
+[1 rows x 8 columns]",1605.0,1.4458660980526767,5.737621878225338,1389.043557454641,2525,True,True,135,True,True,,
+68,"      x     y  ...  group_name origChannel
+id             ...                        
+27 -6.0  18.3  ...      micros        56.0
+
+[1 rows x 8 columns]",756.0,1.2331099049503114,4.75375073270661,,3395,True,True,135,True,True,,
+69,"      x     y  ...  group_name origChannel
+id             ...                        
+28  2.0  19.7  ...      micros        58.0
+
+[1 rows x 8 columns]",2129.0,1.8843226106673459,6.540568591895147,142.28986233927472,7854,True,True,135,True,True,,
+70,"      x     y  ...  group_name origChannel
+id             ...                        
+28  2.0  19.7  ...      micros        58.0
+
+[1 rows x 8 columns]",2134.0,1.1708549399367694,4.323818592493962,9.615774719715665,3469,True,True,135,True,True,,
+71,"      x     y  ...  group_name origChannel
+id             ...                        
+28  2.0  19.7  ...      micros        58.0
+
+[1 rows x 8 columns]",2139.0,1.3006551440013427,5.456966325595033,11.796195384948254,4129,True,True,135,True,True,,
+72,"      x     y  ...  group_name origChannel
+id             ...                        
+29  2.0  19.7  ...      micros        59.0
+
+[1 rows x 8 columns]",1918.0,1.2217504003940889,4.270050949955711,,7978,True,True,135,True,True,,
+73,"      x     y  ...  group_name origChannel
+id             ...                        
+29  2.0  19.7  ...      micros        59.0
+
+[1 rows x 8 columns]",1848.0,1.2912056650447388,3.852546662966513,11.764825055829547,1022,True,True,134,True,True,,

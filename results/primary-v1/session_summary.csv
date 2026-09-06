@@ -1,0 +1,5 @@
+file_name,subject_id,session_id,n_trials_total,n_trials_kept,n_units_total,n_units_kept,significant_units_q05,positive_mean_delta_units,mean_of_unit_mean_delta_hz,median_of_unit_mean_delta_hz
+sub-1_ses-2_ecephys+image.nwb,1,2,135,135,40,40,0,15,-0.19583333333333333,-0.0555555555555555
+sub-11_ses-2_ecephys+image.nwb,11,2,135,135,74,74,14,51,0.11048548548548545,0.17129629629629625
+sub-20_ses-2_ecephys+image.nwb,20,2,135,135,5,5,0,4,0.06481481481481478,0.1018518518518518
+sub-21_ses-2_ecephys+image.nwb,21,2,135,135,20,20,0,11,-0.08472222222222221,0.04166666666666665

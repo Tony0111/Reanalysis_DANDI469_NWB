@@ -1,5 +1,76 @@
 # 实验记录
 
+## 2026-09-06 23:20:24 +08:00
+
+- 事项：项目初步冻结前的目录整理与文档更新。
+- 原始数据：完整输入固定为 `raw/all/000469/`。`raw/` 顶层的 8 个历史 pilot NWB 经 SHA-256 核验后确认均与完整集同名文件逐字节相同，已移动到 `raw/pilot-legacy/`；未删除任何 NWB，也未改写完整数据。
+- 文档：`plan.md` 归档并重命名为 `docs/multi_session_analysis_plan.md`；`experiment_log.md` 与 `project_top_design.md` 移入 `docs/`；新增 `docs/project_freeze_plan.md`。
+- 单 session 基线：`read_data.ipynb`、`data_dictionary.json` 与 `unit_level_statistics.csv` 移入 `single-session-baseline/`。notebook 已改为固定读取完整集中的 canonical `sub-20_ses-2`，并将其两个结构化输出写回该目录。
+- 路径规则：`src/data_paths.py` 继续优先选择 `raw/all/000469/`；仅在完整集不可用时才明确回退到 `raw/pilot-legacy/`，不再把 `raw/` 顶层作为默认 pilot 输入。
+- 结果：`results/` 的版本目录和产物未移动、未改写。README 已记录 `src/` 与 `scripts/` 的分工、结果 JSON/CSV 的内容和冻结维护规则。
+- 验证：移动后确认完整目录有 41 个 NWB，pilot 归档目录有 8 个 NWB，`raw/` 顶层无 NWB；`data_paths.py` 仍选择 41 个全量文件，核心脚本通过语法检查，notebook JSON 有效。上述布局现作为初步冻结基线。
+
+## 2026-09-06 18:11:01 +08:00
+
+- Stage: representative plotting completed after numerical analysis and summaries.
+- Activation/command: activated `bci-plot` in a temporary PowerShell process with `ExecutionPolicy Bypass`, then ran `python .\Reanalysis_DANDI469_NWB\scripts\run_representative_plots_v2.py`.
+- Output: `results/primary-v2-all/plot_runs/representative_plots_v2_20260906_180922+0800.log` and 9 PNG files under `sub-1_ses-2/figures`, `sub-9_ses-2/figures`, and `sub-11_ses-2/figures`.
+- Scope: exactly three representative sessions, three default unit IDs per session; no all-unit batch plotting was attempted. All three sessions passed sequentially. A representative PNG was visually checked and showed the expected raster/PSTH alignment windows.
+- Conclusion: primary-v2-all numerical outputs, descriptive summaries, exclusion logs, and limited representative plots are complete. The 20 event-schema-incompatible `ses-1` sessions remain excluded from the frozen primary analysis and are not silently mixed with `ses-2`.
+
+## 2026-09-06 18:08:19 +08:00
+
+- Stage: session and subject descriptive summaries generated after numerical validation.
+- Command: `D:\AI\miniconda_envs\bci\python.exe .\Reanalysis_DANDI469_NWB\scripts\summarize_primary_v2_all.py`.
+- Output: `results/primary-v2-all/session_summary.csv`, `subject_level_descriptive_summary.csv`, `unit_statistics_all_sessions.csv`, and `descriptive_summary.md`.
+- Result: 21 session rows, 21 subject rows, 901 QC unit rows, and 2,672 retained trial rows. These are descriptive counts and session-stratified summaries only; no trial pooling and no subject-level inferential p-value were computed. Each subject currently contributes one compatible `ses-2` session.
+- Plotting preparation: added `scripts/run_representative_plots_v2.py` for three selected sessions (`sub-1_ses-2`, `sub-9_ses-2`, `sub-11_ses-2`), with the plotting environment check and sequential execution enforced. No plots have been generated yet in this log entry.
+
+## 2026-09-06 18:06:18 +08:00
+
+- Stage: full-data numerical primary analysis completed in the `bci` environment.
+- Command: `D:\AI\miniconda_envs\bci\python.exe .\Reanalysis_DANDI469_NWB\scripts\run_primary_all.py`.
+- Output: `results/primary-v2-all/`. The batch processed one NWB at a time with `src/sternberg_primary.py`, without importing Matplotlib. It completed 21 compatible sessions and wrote `session_metadata.json`, `trial_qc.csv`, `unit_qc.csv`, `unit_trial_features.csv`, `final_count_qc.csv`, `unit_level_statistics.csv`, and `analysis_parameters.json` for every completed session.
+- QC result: 20 `ses-1` sessions were recorded in `session_failures.csv` as `excluded_incompatible_schema` because the three frozen event fields are absent. No compatible session had a runtime failure. The run log contains 41 rows: 21 completed and 20 excluded.
+- Numerical validation: every completed session has all required output files; all permutation p-values and FDR q-values are within `[0, 1]`. `sub-20_ses-2/unit_level_statistics.csv` is an exact CSV match to the existing `primary-v1` baseline. No trial rows were pooled across sessions.
+- Conclusion: the full numerical primary stage is complete for the 21 schema-compatible `ses-2` sessions. Summary generation can proceed; plotting remains deferred.
+
+## 2026-09-06 18:03:41 +08:00
+
+- Stage: full-data inventory for `primary-v2-all`.
+- Input: `raw/all/000469`, selected by `src/data_paths.py`; the legacy pilot files under `raw/` were not included. The inventory contains 41 non-empty NWB files.
+- Command: `D:\AI\miniconda_envs\bci\python.exe .\Reanalysis_DANDI469_NWB\scripts\inventory_sessions.py` (the equivalent `conda run -n bci` invocation was blocked by Conda's unwritable envs-directory configuration).
+- Output: `results/primary-v2-all/session_inventory.csv`. The inventory now records all six requested schema flags: `timestamps_FixationCross`, `timestamps_Encoding1`, `timestamps_Encoding1_end`, `units.spike_times`, `units.electrodes`, and `electrodes.location`.
+- Inventory result: all 41 sessions have `units.spike_times`, `units.electrodes`, and `electrodes.location`. All 21 `ses-2` sessions also have the three required event columns and are eligible for the frozen primary analysis. The 20 `ses-1` sessions all lack the three event columns; they are excluded from the current primary analysis because their event schema does not define the frozen Encoding1 alignment. `ses-1` has 378 trials for 15 sessions and 324 trials for 5 sessions; `ses-2` has 135 trials for 15 sessions and 108 trials for 6 sessions.
+- Decision: do not combine `ses-1` and `ses-2`, and do not pool trial rows across sessions. The new `scripts/run_primary_all.py` processes one compatible NWB at a time, writes per-session outputs under `results/primary-v2-all/sub-*_ses-*`, and records exclusions or failures in `session_run_log.csv` and `session_failures.csv`. The new `scripts/summarize_primary_v2_all.py` is reserved for the post-analysis descriptive summaries.
+- Verification: `run_primary_all.py`, `summarize_primary_v2_all.py`, and `src/sternberg_primary.py` passed `python -m py_compile` in `bci`. No numerical analysis or plotting was started in this stage.
+
+## 2026-09-06 15:15:16 +08:00
+
+- 事项：清理 Matplotlib 排错临时文件和早期失败的批处理尝试，恢复清晰的项目结构。
+- 已删除：工作区根目录的 `test_matplotlib.py` 与 `matplotlib_smoke_test.png`；项目根目录的 `mpl_smoke.png` 与 `analyze_sternberg_sessions.py`；以及该原型崩溃前写出的 `results/multi_session/` 目录。
+- 保留：所有 `raw/` 原始 NWB 文件、`read_data.ipynb`、`src/`、`scripts/`、`results/primary-v1/`、`results/exploratory-v1/`、设计文件和已有实验记录。
+- 验证：已逐一确认上述 5 个删除目标均不存在；`results/` 当前只保留 `primary-v1/` 和 `exploratory-v1/` 两类正式结果目录。
+- 额外清理：删除了路径误用留下的空嵌套目录 `Reanalysis_DANDI469_NWB/Reanalysis_DANDI469_NWB/`，以及仅含已删除原型编译缓存的 `__pycache__/`。
+- 历史边界：删除的是不可作为结论依据的临时/失败产物，不影响已验证的数值结果。Matplotlib 故障原因和正确环境使用方式仍保留在本日志中，以便将来排错。
+
+## 2026-09-06 14:48:27 +08:00
+
+- 事项：阶段 F（探索性分析）的图片 ID 样本量前置检查。
+- 执行：在 `bci` 环境运行 `scripts/inventory_encoding1_picids.py`，只读取第一张编码图片的 `trials.loadsEnc1_PicIDs`；输出保存在 `results/primary-v1/exploratory_precheck/`。
+- 结果：4 个兼容的 `ses-2` session（sub-1、sub-11、sub-20、sub-21）均有 135 个 trial 和相同的 5 个图片 ID。每个图片 ID 在每个 session 中分别出现 26、27 或 28 次（具体为 ID 1: 28 次，ID 2: 26 次，ID 3-5: 各 27 次）；没有只出现一次的图片。
+- 结论：每种图片都有足够且近似平衡的重复 trial，可进行按图片 ID 分层的训练/测试切分。此结果仅说明数据结构适合做探索性图片选择性分析，不说明任何图片已经引起更强或更弱的神经反应。
+- 下一步：预先固定 50/50 的分层训练/测试切分和随机种子；仅在训练 trial 中为每个 unit 选择候选图片，再只在独立测试 trial 中比较该图片与其余图片的反应差异。探索性结果将与 `primary-v1` 主分析分开保存和报告。
+
+## 2026-09-06 14:59:39 +08:00
+
+- 事项：完成阶段 F 的第一张编码图片 ID 探索性训练/测试分析。
+- 执行：在 `bci` 环境运行 `scripts/run_encoding1_picid_exploration.py`。每个 session 的每个图片 ID 按固定种子 `20260906` 分层切为近似各半的训练/测试 trial；每个 unit 仅在训练集选择平均 `response - baseline` 放电率最高的候选图片，再仅在测试集比较候选图片与其余四张图片。测试使用 10,000 次单尾置换，并在各自 session 的 unit 内做 BH-FDR。
+- 数据完整性：4 个 session 均保留 135 个 trial；QC unit 数与主分析一致，依次为 40、74、5、20。每个图片 ID 均有 13 或 14 个训练 trial 和 13 或 14 个测试 trial，分层切分完整。
+- 结果：sub-1 为 0/40、sub-11 为 1/74、sub-20 为 0/5、sub-21 为 1/20 个 unit 在独立测试集通过 session 内 `q < 0.05`。sub-11 的 unit 36 在训练集选择图片 ID 5；测试集候选图片均值为 3.393 Hz，其他图片均值为 -0.250 Hz，差值 3.643 Hz，p=0.000100，q=0.007399。sub-21 的 unit 1 在训练集选择图片 ID 1；测试集候选图片均值为 3.304 Hz，其他图片均值为 -0.341 Hz，差值 3.644 Hz，p=0.000100，q=0.002000。
+- 与主分析的关系：sub-11 unit 36 同时在主分析中显著；sub-21 unit 1 的主分析总体图片后增强未通过 FDR，但其对图片 ID 1 的选择性通过独立测试。这不矛盾：主分析检验的是平均所有图片后是否高于基线，当前检验的是某张图片是否相对其他图片更强；平均会掩盖图片特异性的反应。
+- 结论边界：这是探索性、训练/测试分离的候选发现。FDR 校正范围仅为各自 session 的 unit，不可把这 2 个 unit 合并成跨 subject 的总体显著性结论，也不可据此改变 `primary-v1` 的主结论。需在独立数据或预先定义的重复分析中确认。
+
 ## 2026-09-02 15:05:25 +08:00
 
 - 事项：手动下载 DANDI 000469 数据集固定版本 `0.240123.1806` 的推荐 NWB 文件。
@@ -175,3 +246,74 @@
 - 事项：把原始 NWB 数据移入 `raw/` 子目录并使其不入 git。
 - 操作：①新建 `raw/`，把 `sub-20_ses-2_ecephys+image.nwb` 移入；②`.gitignore` 增加 `raw/`；③修改 notebook cell 0 的文件发现逻辑（在项目根目录与 `raw/` 下同时查找 `*.nwb`，DATA_DIR 仍为项目根以正常落盘输出）；④README 更新数据放置路径与文件表。
 - 验证：改后 `nbconvert --execute` 全量重跑成功（exit 0），能从 `raw/` 读到数据，输出仍在项目根。
+
+## 2026-09-06 11:18:32 +08:00
+
+- 事项：新增多 session 数据后的处理方案重新规划，详细计划见 `plan.md`。
+- 数据清单：`raw/` 有 8 个 NWB 文件；4 个 `ses-2` 文件各有 135 trial，具备当前主分析所需 fixation/Encoding1 事件字段，拟纳入第一轮多 session 验证；4 个 `ses-1` 文件各有 378 trial，但缺少当前主分析字段，暂不强行纳入。
+- 问题记录：实验性批处理脚本在 `sub-11_ses-2` 的批量 raster/PSTH 绘图阶段触发 Windows/Matplotlib 底层异常；错误发生在图形渲染，不是 NWB 读取、spike 计数或统计计算。原始 NWB 未修改；崩溃前生成的 `results/multi_session/` CSV 视为中间产物，不用于结论。
+- 决策：后续采用“一套无绘图数值核心 + 每个 session 独立结果目录 + 独立的小规模可视化 + 单独的跨 session 汇总”结构。第一步必须用 `sub-20_ses-2` 复现已有正式结果，再依次分析其余兼容 session。
+
+## 2026-09-06 11:27:00 +08:00
+
+- 事项：执行 `plan.md` 阶段 A-C，完成多 session 的无绘图数值主分析。
+- 阶段 A：生成 `results/primary-v1/session_inventory.csv`，记录 8 个 NWB 的文件大小、SHA-256、subject/session、trial/unit/electrode 数和 schema 兼容性。4 个 `ses-2` 兼容当前主分析；4 个 `ses-1` 缺少 `timestamps_FixationCross`、`timestamps_Encoding1`、`timestamps_Encoding1_end`，暂不纳入。
+- 阶段 B：新增 `src/sternberg_primary.py`、`scripts/inventory_sessions.py` 和 `scripts/run_one_session.py`。数值核心不导入 Matplotlib，仍使用冻结窗口、QC、10,000 次置换、5,000 次 bootstrap、session 内 BH-FDR 和随机种子 `20260901`。
+- 基线验收：`sub-20_ses-2` 新核心与已有 `unit_level_statistics.csv` 的数值最大绝对差小于 `1e-6`，`n_trials` 和显著性结果完全一致。中途修正了随机数调用顺序，使其与原 notebook 的“先完成所有 permutation，再完成所有 bootstrap”一致。
+- 阶段 C：4 个 `ses-2` 均为 135/135 trial、通过 QC 的 unit 数分别为 sub-1=40、sub-11=74、sub-20=5、sub-21=20，共 139 个 unit；结果分别保存于 `results/primary-v1/sub-*_ses-2/`。
+- session 级描述性结果：sub-1 为 0 个、sub-11 为 14 个、sub-20 为 0 个、sub-21 为 0 个 unit 通过 `q<0.05`。这只是各 session 内结果，尚未构成跨 subject 总体结论。
+- 当前阶段：阶段 A-C 完成；阶段 D 的小规模 Matplotlib/Jupyter raster-PSTH smoke test 和人工时间对齐检查待执行。旧的 `results/multi_session/` 仍视为失败尝试中间产物，不纳入汇总。
+
+## 2026-09-06 11:31:16 +08:00
+
+- 事项：执行阶段 D 的最小绘图 smoke test。
+- 结果：单 unit raster/PSTH 脚本和最简单的 Matplotlib 折线在 `fig.canvas.draw()` 时均触发 Windows fatal exception `0xc06d007f`，错误位于 Matplotlib transforms；即使使用 `Agg` backend 仍失败。
+- 环境：Python 3.12.13、Matplotlib 3.11.0、NumPy 2.5.1；默认 backend 为 `qtagg`。
+- 判断：这是当前 Matplotlib 二进制/依赖/渲染环境问题，不是 NWB 文件、spike 数据量或 raster/PSTH 逻辑问题。阶段 D 暂停，未生成正式 figure，也不影响 `results/primary-v1/` 的数值结果。
+- 决策：先建立隔离绘图环境并通过最小折线 smoke test，再恢复代表性 unit 的人工时间对齐检查；阶段 E/F 暂不推进。
+
+## 2026-09-06 14:19:20 +08:00
+
+- 事项：按 `plan.md` 恢复阶段 D 的独立绘图流程。
+- 环境分工：`bci` 继续负责 NWB 数值处理；已激活的 `bci-plot` 负责 raster/PSTH。绘图环境固定为 NumPy 1.26.4、Matplotlib 3.10.9，并通过增强版 smoke test（折线、垂直参考线和阴影区域）验证。
+- 验证：使用已激活环境中的 `python` 成功生成 `sub-20_ses-2` 和 `sub-1_ses-2` 的 unit 0 raster/PSTH PNG。绘图结果仍需每个兼容 session 选取代表性 unit 并完成人工时间对齐检查，因此阶段 D 尚未完成。
+- 纪律：不得使用未激活环境的 Python 绝对路径替代 `conda activate bci-plot` 后的 `python`，以免 Conda 原生 DLL 路径未进入 `PATH`。
+
+## 2026-09-06 14:23:11 +08:00
+
+- 故障主题：Windows 下 Matplotlib 绘图进程直接退出，错误码为 `0xc06d007f`。
+- 典型表现：最初的 `bci` 环境中，即使使用 `matplotlib.use("Agg")`，程序也可能在 `fig.canvas.draw()`、`fig.savefig()` 或 `axvline()` 期间直接退出；Python 的 `try/except` 无法捕获。故障回溯通常停在 `matplotlib.transforms.get_affine()`、`backend_agg` 或 NumPy/BLAS 原生层。
+- 排查结论：这不是 NWB 文件损坏、spike 点数量过多、trial 数量过多或统计代码错误。数值核心不导入 Matplotlib，`results/primary-v1/` 的数值结果不受影响。真实数据中 unit 0 的对齐点数只有 107 个，仍可触发故障，排除了“大数据量”解释。
+- 重要原因：Conda 环境的原生 DLL 依赖必须通过环境激活后的 `PATH` 正确加载。仅使用 `D:\AI\miniconda_envs\bci-plot\python.exe` 的绝对路径，不能等同于先执行 `conda activate bci-plot`；这种运行方式可能缺少环境的 `Library\bin`、`Library\usr\bin` 和 `Scripts` 路径。此前由工具直接调用绝对路径得到的部分崩溃结果，不能代替用户在已激活 PowerShell 中的测试。
+- 处理方法：保留 `bci` 作为数值分析环境；单独使用 `bci-plot` 绘图。当前稳定组合为 Python 3.12、Matplotlib 3.10.9、NumPy 1.26.4，并通过 conda-forge 安装。不要在原 `bci` 环境中安装或降级绘图库。
+- 正确验证：
+  1. 关闭旧的 Jupyter/Python kernel。
+  2. 执行 `conda activate bci-plot`。
+  3. 用 `where python` 确认第一项是 `D:\AI\miniconda_envs\bci-plot\python.exe`。
+  4. 执行根目录的 `python .\test_matplotlib.py`，必须看到 `PASS: figure saved ...`。
+  5. 再一次只运行一个 session 的 `plot_session_qc.py`，成功保存 PNG 后才继续下一个 session。
+- 当前验证结果：增强版 smoke test 已成功；`sub-20_ses-2` 和 `sub-1_ses-2` 的 unit 0 raster/PSTH 已成功保存。阶段 D 仍需完成其余代表性 unit 的人工时间对齐检查。
+- 复发时的诊断命令：在已激活的环境中使用 `python -u -X faulthandler .\test_matplotlib.py`，保存完整输出和退出码；不要并行启动多个绘图进程，也不要先修改数值分析代码。
+
+## 2026-09-06 14:25:59 +08:00
+
+- 事项：完成 `sub-1_ses-2` 的 3 个代表性 unit（0、20、39）raster/PSTH 可视化检查。
+- 输出：`results/primary-v1/sub-1_ses-2/figures/unit_0_raster_psth.png`、`unit_20_raster_psth.png`、`unit_39_raster_psth.png`。
+- 人工 QC：0 秒黑色参考线、baseline `[-0.8, 0)` 灰色区域、0 到 0.2 秒间隔和 response `[0.2, 1.0)` 蓝色区域均位置正确；未观察到系统性的整体时间错位。该 session 的代表性绘图检查暂记为通过。
+- 下一步：在同一已激活的 `bci-plot` 环境中处理 `sub-11_ses-2`，完成后再处理 `sub-20_ses-2` 和 `sub-21_ses-2`。
+
+## 2026-09-06 14:32:46 +08:00
+
+- 事项：完成阶段 D 的代表性 raster/PSTH 批量绘图与人工时间对齐检查。
+- 执行：在已激活的 `bci-plot` 中运行 `scripts/run_representative_plots.py`。脚本按顺序处理 4 个兼容 `ses-2`，每个 session 绘制最小、中间、最大 ID 的 3 个 unit；运行日志为 `results/primary-v1/plot_runs/representative_plots_20260906_143110+0800.log`。
+- 结果：4 个 session 全部 PASS，共生成 12 张 PNG。代表性 unit 分别为 sub-1: 0/20/39，sub-11: 0/37/73，sub-20: 0/2/4，sub-21: 0/10/19。
+- 人工 QC：全部图的 0 秒黑线、baseline `[-0.8, 0)` 灰色区、0 到 0.2 秒间隔、response `[0.2, 1.0)` 蓝色区和 PSTH 横轴一致；未观察到任何 session 的系统性时间错位。
+- 验收：阶段 D 完成。raster/PSTH 仅作为对齐和展示 QC，不参与或改变数值主检验。下一步进入阶段 E 的跨 session 描述性汇总；不合并 trial，不进行跨 subject 总体显著性推断。
+
+## 2026-09-06 14:44:05 +08:00
+
+- 事项：完成阶段 E 的跨 session/subject 描述性汇总。
+- 执行：在 `bci` 环境运行 `scripts/summarize_primary_results.py`，生成/更新 `session_summary.csv`、`unit_statistics_all_sessions.csv`、`subject_level_descriptive_summary.csv` 和 `results/primary-v1/descriptive_summary.md`。
+- 结果：4 个兼容 session 各保留 135 个 trial，共 540 个 trial 和 139 个 QC unit；sub-11_ses-2 有 14/74 个 session 内 FDR 显著 unit，其余 3 个 session 均为 0 个。session-level unit mean delta 的方向不一致。
+- 解释边界：540 个 trial 和 139 个 unit 仅用于数据规模清点，不能当作独立受试者进行总体检验；每位 subject 目前只有 1 个兼容 session，因此未计算跨 subject 总体 p 值。
+- 验收：阶段 E 完成。下一步仅进行阶段 F 的前置数据检查：统计 `loadsEnc1_PicIDs` 的重复次数与样本量，不提前进行图片选择性检验。

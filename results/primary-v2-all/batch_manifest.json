@@ -1,0 +1,24 @@
+{
+  "inventory": "E:\\BCI-workstation\\NWB\\Reanalysis_DANDI469_NWB\\results\\primary-v2-all\\session_inventory.csv",
+  "output": "E:\\BCI-workstation\\NWB\\Reanalysis_DANDI469_NWB\\results\\primary-v2-all",
+  "analysis_parameters": {
+    "baseline_window_seconds": [
+      -0.8,
+      0.0
+    ],
+    "response_window_seconds": [
+      0.2,
+      1.0
+    ],
+    "minimum_active_trials": 10,
+    "permutations": 10000,
+    "bootstraps": 5000,
+    "fdr_q_threshold": 0.05,
+    "random_seed": 20260901,
+    "analysis_scope": "Each compatible session is analyzed independently; trial rows are not pooled."
+  },
+  "n_inventory_rows": 41,
+  "n_completed": 21,
+  "n_excluded_or_failed": 20,
+  "completed_without_trial_pooling": true
+}

@@ -1,0 +1,12 @@
+{
+  "source_file": "sub-11_ses-2_ecephys+image.nwb",
+  "sha256": "5ee710a5921ce3aabf816aabc6f720bbe4db5cc7a0516cabe4af432aa7626530",
+  "subject_id": "11",
+  "session_id": "2",
+  "nwb_identifier": "SBID_11_P36CS",
+  "session_start_time": "2015-01-01 00:00:00-08:00",
+  "n_trials_total": 135,
+  "n_trials_kept": 135,
+  "n_units_total": 74,
+  "n_units_kept": 74
+}

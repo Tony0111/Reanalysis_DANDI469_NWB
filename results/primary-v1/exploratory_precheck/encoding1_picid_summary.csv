@@ -1,0 +1,5 @@
+file_name,subject_id,session_id,n_trials,n_unique_pic_ids,min_trials_per_pic_id,median_trials_per_pic_id,max_trials_per_pic_id,pic_ids_seen_once,pic_ids_seen_multiple_times
+sub-1_ses-2_ecephys+image.nwb,1,2,135,5,26,27.0,28,0,5
+sub-11_ses-2_ecephys+image.nwb,11,2,135,5,26,27.0,28,0,5
+sub-20_ses-2_ecephys+image.nwb,20,2,135,5,26,27.0,28,0,5
+sub-21_ses-2_ecephys+image.nwb,21,2,135,5,26,27.0,28,0,5

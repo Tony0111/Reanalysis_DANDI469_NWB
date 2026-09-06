@@ -1,6 +1,6 @@
 # 运行环境依赖（conda env: bci, Python 3.12.13）
 # 生成方式：在 bci 环境中核对关键包版本后手工整理；并非完整 pip freeze。
-# 主要分析栈见 project_top_design.md 第 18、20 节。
+# 主要分析栈见 docs/project_top_design.md 第 18、20 节。
 
 numpy==2.5.1
 pandas==3.0.3
