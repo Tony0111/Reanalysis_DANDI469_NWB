@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从 NWB 到 PSTH · DANDI 000469 单神经元再分析 · 项目汇报</title>
+<style>
+  :root{
+    --ink:#0B1F3A;          /* 深夜蓝：主色 */
+    --ink-soft:#22355A;
+    --paper:#F7F4EE;        /* 实验记录纸 */
+    --paper-dim:#EFEAE0;
+    --electric:#2E6BFF;     /* 电信号蓝 */
+    --coral:#FF5C4D;        /* 动作电位红 */
+    --mint:#23B68A;         /* 阳性结果绿 */
+    --amber:#E8A13A;
+    --grey:#8A93A6;
+    --hair:rgba(11,31,58,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;color:var(--ink);overflow:hidden;}
+  .mono{font-family:"SF Mono","JetBrains Mono",Consolas,monospace;}
+
+  /* ---------- 舞台 ---------- */
+  .slide{
+    position:absolute;inset:0;display:none;
+    background:var(--paper);
+    padding:64px 84px 84px;
+    flex-direction:column;justify-content:center;
+    animation:fadein .45s ease;
+  }
+  .slide.active{display:flex;}
+  @keyframes fadein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* 纸张纹理细线 */
+  .slide::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg,transparent 0 46px,rgba(11,31,58,.028) 46px 47px);
+  }
+  .slide.dark{background:var(--ink);color:var(--paper);}
+  .slide.dark::before{background:repeating-linear-gradient(0deg,transparent 0 46px,rgba(247,244,238,.03) 46px 47px);}
+
+  /* ---------- 版式元素 ---------- */
+  .kicker{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:13px;letter-spacing:.32em;font-weight:600;color:var(--electric);
+    text-transform:uppercase;margin-bottom:18px;
+  }
+  .kicker::before{content:"";width:34px;height:2px;background:var(--coral);}
+  h1{font-size:64px;line-height:1.12;font-weight:800;letter-spacing:-.01em;}
+  h2{font-size:42px;line-height:1.15;font-weight:800;letter-spacing:-.01em;margin-bottom:26px;}
+  h2 .accent{color:var(--electric);}
+  .sub{font-size:19px;line-height:1.75;color:var(--ink-soft);max-width:880px;}
+  .dark .sub{color:rgba(247,244,238,.72);}
+  .foot{
+    position:absolute;left:84px;right:84px;bottom:30px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:12px;letter-spacing:.14em;color:var(--grey);
+    border-top:1px solid var(--hair);padding-top:12px;
+  }
+  .dark .foot{border-top-color:rgba(247,244,238,.14);}
+
+  /* ---------- 组件 ---------- */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .card{
+    background:#fff;border:1px solid var(--hair);border-radius:14px;
+    padding:26px 26px 22px;box-shadow:0 10px 30px -18px rgba(11,31,58,.25);
+  }
+  .card h3{font-size:17px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .card p,.card li{font-size:14.5px;line-height:1.75;color:var(--ink-soft);}
+  .dark .card{background:rgba(247,244,238,.05);border-color:rgba(247,244,238,.12);box-shadow:none;}
+  .dark .card p,.dark .card li{color:rgba(247,244,238,.75);}
+
+  .stat{display:flex;flex-direction:column;gap:6px;}
+  .stat .num{font-size:56px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;}
+  .stat .lab{font-size:13px;letter-spacing:.08em;color:var(--grey);}
+  .c-electric{color:var(--electric);} .c-coral{color:var(--coral);} .c-mint{color:var(--mint);} .c-amber{color:var(--amber);}
+
+  .pill{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:3px 12px;border-radius:999px;margin-right:6px;}
+  .pill.blue{background:rgba(46,107,255,.12);color:var(--electric);}
+  .pill.green{background:rgba(35,182,138,.14);color:var(--mint);}
+  .pill.red{background:rgba(255,92,77,.12);color:var(--coral);}
+  .pill.amber{background:rgba(232,161,58,.16);color:var(--amber);}
+
+  table.t{border-collapse:collapse;width:100%;font-size:14.5px;}
+  table.t th{
+    text-align:left;font-size:12px;letter-spacing:.14em;color:var(--grey);
+    border-bottom:2px solid var(--ink);padding:8px 10px;font-weight:700;
+  }
+  table.t td{border-bottom:1px solid var(--hair);padding:9px 10px;color:var(--ink-soft);}
+  table.t tr td:first-child{font-weight:700;color:var(--ink);}
+  table.t td.num,table.t th.num{text-align:right;font-variant-numeric:tabular-nums;}
+
+  .flow{display:flex;align-items:stretch;gap:0;margin:26px 0;}
+  .flow .node{
+    flex:1;background:#fff;border:1px solid var(--hair);border-radius:12px;
+    padding:16px 14px;text-align:center;position:relative;
+  }
+  .flow .node .t1{font-size:14px;font-weight:700;}
+  .flow .node .t2{font-size:11.5px;color:var(--grey);margin-top:4px;line-height:1.5;}
+  .flow .arrow{align-self:center;padding:0 8px;color:var(--coral);font-size:20px;font-weight:800;}
+
+  .fig{
+    border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#fff;
+    box-shadow:0 14px 34px -20px rgba(11,31,58,.35);
+  }
+  .fig img{display:block;width:100%;height:auto;}
+  .fig .cap{font-size:12px;color:var(--grey);padding:8px 14px;border-top:1px solid var(--hair);background:var(--paper);}
+
+  blockquote.note{
+    border-left:4px solid var(--coral);background:rgba(255,92,77,.06);
+    padding:16px 22px;border-radius:0 12px 12px 0;font-size:15px;line-height:1.8;color:var(--ink-soft);
+  }
+  .dark blockquote.note{background:rgba(255,92,77,.10);color:rgba(247,244,238,.8);}
+
+  /* 时间轴（Sternberg 范式） */
+  .timeline{position:relative;margin:34px 0 8px;}
+  .timeline .rail{position:absolute;left:0;right:0;top:34px;height:3px;background:linear-gradient(90deg,var(--grey),var(--electric),var(--coral));border-radius:2px;}
+  .timeline .steps{display:grid;grid-template-columns:repeat(5,1fr);}
+  .timeline .step{text-align:center;position:relative;padding-top:52px;}
+  .timeline .dot{
+    position:absolute;top:24px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;background:var(--paper);
+    border:4px solid var(--electric);z-index:1;
+  }
+  .timeline .step:nth-child(4) .dot{border-color:var(--coral);}
+  .timeline .step:nth-child(5) .dot{border-color:var(--mint);}
+  .timeline .step .name{font-size:15px;font-weight:800;}
+  .timeline .step .desc{font-size:12px;color:var(--grey);margin-top:4px;line-height:1.6;padding:0 10px;}
+  .win-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin-top:6px;}
+  .win-base{background:rgba(138,147,166,.18);color:#5b6579;}
+  .win-resp{background:rgba(46,107,255,.13);color:var(--electric);}
+
+  /* 装饰 spike train */
+  .spikes{position:absolute;opacity:.9;pointer-events:none;}
+
+  /* ---------- 导航 ---------- */
+  #progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--electric),var(--coral));z-index:99;transition:width .3s ease;}
+  #pager{
+    position:fixed;bottom:26px;right:32px;z-index:99;display:flex;gap:10px;align-items:center;
+    color:var(--grey);font-size:12px;letter-spacing:.1em;
+  }
+  #pager button{
+    width:38px;height:38px;border-radius:50%;border:1px solid var(--hair);
+    background:#fff;color:var(--ink);font-size:16px;cursor:pointer;transition:.2s;
+  }
+  #pager button:hover{background:var(--ink);color:#fff;}
+  .hint{position:fixed;bottom:70px;right:32px;z-index:99;font-size:11px;color:var(--grey);letter-spacing:.1em;}
+
+  @media print{
+    html,body{overflow:visible;}
+    .slide{position:relative;display:flex !important;page-break-after:always;min-height:100vh;}
+    #pager,#progress,.hint{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ============ 01 封面 ============ -->
+<section class="slide dark">
+  <svg class="spikes" style="top:0;left:0;width:100%;height:100%;" viewBox="0 0 1440 900" preserveAspectRatio="none">
+    <g stroke="#2E6BFF" stroke-width="2" opacity=".35">
+      <path d="M0 760 H180 l6 -90 6 90 H420 l6 -120 6 120 H720 l6 -70 6 70 H1010 l6 -140 6 140 H1300 l6 -90 6 90 H1440" fill="none"/>
+      <path d="M0 810 H120 l6 -60 6 60 H380 l6 -100 6 100 H660 l6 -50 6 50 H940 l6 -110 6 110 H1220 l6 -60 6 60 H1440" fill="none" opacity=".6"/>
+    </g>
+    <g stroke="#FF5C4D" stroke-width="2" opacity=".3">
+      <path d="M0 705 H260 l6 -70 6 70 H540 l6 -110 6 110 H860 l6 -60 6 60 H1150 l6 -100 6 100 H1440" fill="none"/>
+    </g>
+    <g fill="#FF5C4D" opacity=".8">
+      <circle cx="1180" cy="180" r="5"/><circle cx="1240" cy="150" r="3.4"/><circle cx="1120" cy="140" r="3.4"/>
+      <circle cx="1200" cy="110" r="2.6"/><circle cx="1300" cy="200" r="2.6"/>
+    </g>
+    <g stroke="#2E6BFF" stroke-width="1.4" opacity=".55" fill="none">
+      <circle cx="1180" cy="180" r="46"/><circle cx="1180" cy="180" r="80" opacity=".5"/><circle cx="1180" cy="180" r="118" opacity=".28"/>
+      <path d="M1180 180 L1240 150 M1180 180 L1120 140 M1180 180 L1200 110 M1180 180 L1300 200"/>
+    </g>
+  </svg>
+  <div style="position:relative;z-index:1;max-width:1000px;">
+    <div class="kicker" style="color:var(--coral);">Project Report · 神经科学入门 × Python NWB</div>
+    <h1 style="color:var(--paper);">从 <span style="color:var(--electric);">NWB</span> 到 <span style="color:var(--coral);">PSTH</span><br>人体单神经元对视觉工作记忆图片的<br>事件锁定再分析</h1>
+    <p class="sub" style="margin-top:26px;">基于 DANDI <span class="mono" style="color:var(--amber);">000469</span> Sternberg 工作记忆任务公开数据 ·
+    21 个 session · 901 个 QC 神经元 · 可复现全链条分析</p>
+    <div style="margin-top:40px;display:flex;gap:10px;">
+      <span class="pill blue">PyNWB 4.1.0</span>
+      <span class="pill green">Session 为界的推断</span>
+      <span class="pill red">10,000 次置换检验</span>
+      <span class="pill amber">结果已冻结</span>
+    </div>
+  </div>
+  <div class="foot"><span>Reanalysis_DANDI469_NWB</span><span>数据许可 CC BY 4.0 · DANDI 0.240123.1806</span></div>
+</section>
+
+<!-- ============ 02 项目缘起 ============ -->
+<section class="slide">
+  <div class="kicker">01 · 为什么做这个项目</div>
+  <h2>一次<span class="accent">跨界入门</span>：用真实数据学会一条完整的神经科学分析链</h2>
+  <div class="grid3" style="margin-top:10px;">
+    <div class="card">
+      <h3>🧠 学习目标</h3>
+      <p>以初学者身份进入神经科学：理解 unit、spike time、iEEG、MTL、工作记忆与基线比较这些核心概念，并在真实数据上落地。</p>
+    </div>
+    <div class="card">
+      <h3>🐍 技术目标</h3>
+      <p>掌握 Python 的 <span class="mono">pynwb</span> / <span class="mono">h5py</span> 生态：读取 NWB 结构、提取 trials 与 units、做事件对齐与统计检验。</p>
+    </div>
+    <div class="card">
+      <h3>🔁 工程目标</h3>
+      <p>不止跑出一张图——建立 <b>可复现、可审计、可冻结</b> 的分析仓库：版本化结果、审计日志、固定随机种子、失败留痕。</p>
+    </div>
+  </div>
+  <blockquote class="note" style="margin-top:30px;">
+    项目定位：这是基于公开数据的<b>二次分析</b>，不重新采集数据、不重新 spike sorting，
+    重点是把「事件时间 → spike → 放电率 → 统计推断」这条链路做扎实。
+  </blockquote>
+  <div class="foot"><span>01 · 项目缘起</span><span>DANDI 000469 Reanalysis</span></div>
+</section>
+
+<!-- ============ 03 数据与范式 ============ -->
+<section class="slide">
+  <div class="kicker">02 · 数据与实验范式</div>
+  <h2>DANDI 000469：Sternberg <span class="accent">工作记忆</span>任务中的人类单神经元</h2>
+  <div class="grid4" style="margin-bottom:26px;">
+    <div class="stat"><span class="num c-electric">41</span><span class="lab">NWB 文件（21 受试者）</span></div>
+    <div class="stat"><span class="num c-coral">1,809</span><span class="lab">units（全数据集）</span></div>
+    <div class="stat"><span class="num c-mint">≈ 9.8 GB</span><span class="lab">总数据规模</span></div>
+    <div class="stat"><span class="num c-amber">MTL</span><span class="lab">内侧颞叶等记录区域</span></div>
+  </div>
+  <div class="timeline">
+    <div class="rail"></div>
+    <div class="steps">
+      <div class="step"><div class="dot"></div><div class="name">Fixation 注视</div><div class="desc">0.9–1.0 s 注视十字<br>提供 trial 内基线</div><span class="win-tag win-base">基线窗 [−0.8, 0.0) s</span></div>
+      <div class="step"><div class="dot"></div><div class="name">Encoding 1</div><div class="desc">第一张编码图片出现<br>主分析唯一对齐事件</div><span class="win-tag win-resp">反应窗 [0.2, 1.0) s</span></div>
+      <div class="step"><div class="dot"></div><div class="name">Encoding 2…n</div><div class="desc">后续编码图片<br>本分析不锁定，避免归因混淆</div></div>
+      <div class="step"><div class="dot"></div><div class="name">Maintenance 保持</div><div class="desc">短时保持记忆集<br>不在本次假设内</div></div>
+      <div class="step"><div class="dot"></div><div class="name">Probe 探测</div><div class="desc">判断探测项是否在记忆集中<br>行为字段保留未用</div></div>
+    </div>
+  </div>
+  <div class="foot"><span>02 · 数据与范式</span><span> Rutishauser Lab · workingmem-release-NWB</span></div>
+</section>
+
+<!-- ============ 04 研究问题与分析口径 ============ -->
+<section class="slide">
+  <div class="kicker">03 · 研究问题与主分析口径</div>
+  <h2>一个问题，一套<span class="accent">预先固定</span>的口径</h2>
+  <p class="sub" style="margin-bottom:24px;">
+    <b style="color:var(--ink);">主问题：</b>在每个可兼容 session 内，第一张编码图片出现后，单元的放电率是否高于图片出现前的基线？
+    —— 结论只能以 <b style="color:var(--coral);">session 为分析边界</b>解释，绝不跨 session 拼接 trial 或 unit。
+  </p>
+  <table class="t">
+    <tr><th style="width:26%;">项目</th><th>固定定义</th></tr>
+    <tr><td>对齐事件</td><td class="mono">timestamps_Encoding1</td></tr>
+    <tr><td>基线窗 / 反应窗</td><td><span class="pill red">[−0.8, 0.0) s</span> <span class="pill blue">[0.2, 1.0) s</span> 放电率差，单位 Hz</td></tr>
+    <tr><td>单元检验</td><td>session 内 <b>10,000 次单尾配对置换检验</b>（备择：图片后更高）</td></tr>
+    <tr><td>不确定性</td><td>5,000 次 bootstrap 置信区间</td></tr>
+    <tr><td>多重比较</td><td>仅同一 session 内 BH-FDR，阈值 <span class="mono">q &lt; 0.05</span></td></tr>
+    <tr><td>随机种子</td><td class="mono">20260901</td></tr>
+    <tr><td>绘图纪律</td><td>数值先行：主分析不导入 Matplotlib，确认后才在独立环境绘制少量代表图</td></tr>
+  </table>
+  <div class="foot"><span>03 · 研究问题与口径</span><span>窗口在分析前定义，不看结果挑区间</span></div>
+</section>
+
+<!-- ============ 05 工程架构 ============ -->
+<section class="slide">
+  <div class="kicker">04 · 工程架构</div>
+  <h2><span class="mono">src/</span> 管「怎么分析」，<span class="mono">scripts/</span> 管「何时对谁分析」</h2>
+  <div class="flow">
+    <div class="node"><div class="t1 mono">raw/all/000469/</div><div class="t2">41 个 NWB<br>唯一正式输入</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t1 mono">inventory_sessions.py</div><div class="t2">结构盘点<br>SHA-256 登记</div></div>
+    <div class="arrow">→</div>
+    <div class="node" style="border-color:var(--electric);box-shadow:0 0 0 3px rgba(46,107,255,.15);"><div class="t1 mono">run_primary_all.py</div><div class="t2">调用 src/sternberg_primary.py<br>逐 session QC + 统计</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t1 mono">summarize_primary_v2_all.py</div><div class="t2">session / subject / unit<br>描述性汇总</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t1 mono">results/primary-v2-all/</div><div class="t2">冻结的正式结果<br>+ 审计记录</div></div>
+  </div>
+  <div class="grid3" style="margin-top:8px;">
+    <div class="card"><h3>分层复用</h3><p><span class="mono">src/</span> 无副作用、可被脚本与 notebook 复用；I/O 与批处理逻辑不混入统计实现。</p></div>
+    <div class="card"><h3>失败留痕</h3><p>任何 session 失败都写入 <span class="mono">session_failures.csv</span> 与 <span class="mono">failure.json</span>，绝不静默跳过。</p></div>
+    <div class="card"><h3>环境分离</h3><p>数值在 <span class="mono">bci</span> 环境单进程运行；绘图在 <span class="mono">bci-plot</span> 环境单独进行，仅少量代表图。</p></div>
+  </div>
+  <div class="foot"><span>04 · 工程架构</span><span>版本化结果目录，已有版本不覆盖</span></div>
+</section>
+
+<!-- ============ 06 数据审计 ============ -->
+<section class="slide dark">
+  <div class="kicker" style="color:var(--amber);">05 · 数据审计：先说清楚谁没上桌</div>
+  <h2 style="color:var(--paper);">41 个文件，<span style="color:var(--mint);">21 个进入</span>主分析，<span style="color:var(--coral);">20 个明确排除</span></h2>
+  <div class="grid2" style="align-items:center;">
+    <div>
+      <div style="display:flex;gap:44px;margin-bottom:30px;">
+        <div class="stat"><span class="num c-mint">21</span><span class="lab" style="color:rgba(247,244,238,.55);">ses-2 兼容 session<br>具备三项 Encoding1 事件字段</span></div>
+        <div class="stat"><span class="num c-coral">20</span><span class="lab" style="color:rgba(247,244,238,.55);">ses-1 排除 session<br>缺少固定事件定义</span></div>
+      </div>
+      <p class="sub">20 个 <span class="mono" style="color:var(--amber);">ses-1</span> 文件<b style="color:var(--paper);">完整可读</b>，但缺少
+      <span class="mono">timestamps_FixationCross / Encoding1 / Encoding1_end</span>。
+      在不改变事件定义的前提下无法套用主分析——因此<b style="color:var(--paper);">在数值分析之前</b>就排除，
+      并为每个文件留下机器可读的 <span class="mono">failure.json</span> 审计记录。</p>
+    </div>
+    <div style="display:flex;justify-content:center;">
+      <svg width="360" height="360" viewBox="0 0 42 42">
+        <circle cx="21" cy="21" r="15.915" fill="none" stroke="rgba(247,244,238,.1)" stroke-width="6"/>
+        <circle cx="21" cy="21" r="15.915" fill="none" stroke="#23B68A" stroke-width="6"
+          stroke-dasharray="51.2 48.8" stroke-dashoffset="25" stroke-linecap="round"/>
+        <circle cx="21" cy="21" r="15.915" fill="none" stroke="#FF5C4D" stroke-width="6"
+          stroke-dasharray="48.8 51.2" stroke-dashoffset="-26.2" stroke-linecap="round" opacity=".85"/>
+        <text x="21" y="19" text-anchor="middle" fill="#F7F4EE" font-size="7.5" font-weight="800">41 files</text>
+        <text x="21" y="27" text-anchor="middle" fill="rgba(247,244,238,.6)" font-size="3.6">21 in · 20 out</text>
+      </svg>
+    </div>
+  </div>
+  <div class="foot"><span>05 · 数据审计</span><span>排除原因：schema 不兼容，非读写错误</span></div>
+</section>
+
+<!-- ============ 07 全量结果 ============ -->
+<section class="slide">
+  <div class="kicker">06 · 全量主分析结果</div>
+  <h2>部分 session 中，确实存在<span class="accent">图片后放电率升高</span>的神经元</h2>
+  <div style="display:flex;gap:48px;margin-bottom:8px;">
+    <div class="stat"><span class="num c-electric">2,672</span><span class="lab">保留 trial（仅描述规模）</span></div>
+    <div class="stat"><span class="num c-electric">901</span><span class="lab">QC unit</span></div>
+    <div class="stat"><span class="num c-mint">16 / 21</span><span class="lab">含 ≥1 个 FDR 显著 unit 的 session</span></div>
+    <div class="stat"><span class="num c-coral">101</span><span class="lab">q &lt; 0.05 的 unit 总数（效应全为正）</span></div>
+  </div>
+  <div class="card" style="padding:22px 26px 12px;">
+    <h3 style="margin-bottom:2px;">各 session 的 FDR 显著 unit 数 <span style="font-weight:400;color:var(--grey);font-size:12.5px;">（session 内独立检验，不跨 session 合并）</span></h3>
+    <svg id="barChart" viewBox="0 0 1000 240" style="width:100%;height:auto;display:block;"></svg>
+  </div>
+  <div class="foot"><span>06 · 全量结果</span><span>数据来源 results/primary-v2-all/session_summary.csv</span></div>
+</section>
+
+<!-- ============ 08 结果解读 ============ -->
+<section class="slide">
+  <div class="kicker">07 · 如何解读</div>
+  <h2>谨慎的三句话：<span class="accent">能说</span>什么，<span style="color:var(--coral);">不能说</span>什么</h2>
+  <div class="grid3">
+    <div class="card" style="border-top:4px solid var(--mint);">
+      <h3>✅ 可以说</h3>
+      <p>「在 21 个兼容 session 中，16 个 session 含有至少一个 session 内 FDR 显著的 unit，共 101 个 unit 在图片后放电率显著升高。」</p>
+    </div>
+    <div class="card" style="border-top:4px solid var(--coral);">
+      <h3>⛔ 不能说</h3>
+      <p>「所有 session 在图片后均增强」——有的 session unit 平均差为负，5 个 session 没有任何显著 unit；也不能做跨受试者总体推断。</p>
+    </div>
+    <div class="card" style="border-top:4px solid var(--amber);">
+      <h3>⚠️ 还需记住</h3>
+      <p>图片来自 screening 预选，显著 ≠ 「概念细胞」；总数 2,672 / 901 只描述数据规模，不构成合并检验。</p>
+    </div>
+  </div>
+  <blockquote class="note" style="margin-top:28px;">
+    <b>单 session 基线对照（sub-20_ses-2）：</b>135 个 trial、5 个 QC unit，FDR 校正后 0 个显著；
+    平均放电率差 0.065 Hz。这提醒我们：<b>没有显著结果同样是诚实的结果</b>，它是教学与回归测试的固定基线。
+  </blockquote>
+  <div class="foot"><span>07 · 结果解读</span><span>统计结论的边界，就是叙事的分寸</span></div>
+</section>
+
+<!-- ============ 09 代表图 ============ -->
+<section class="slide">
+  <div class="kicker">08 · 代表性证据</div>
+  <h2>Raster / PSTH：把统计数字<span class="accent">看回去</span>成 spike</h2>
+  <div class="grid3">
+    <figure class="fig"><img src="results/primary-v2-all/sub-11_ses-2/figures/unit_37_raster_psth.png" alt="sub-11 unit 37 raster/PSTH"><figcaption class="cap">sub-11_ses-2 · unit 37（该 session 含 14 个 FDR 显著 unit）</figcaption></figure>
+    <figure class="fig"><img src="results/primary-v2-all/sub-9_ses-2/figures/unit_21_raster_psth.png" alt="sub-9 unit 21 raster/PSTH"><figcaption class="cap">sub-9_ses-2 · unit 21（该 session 含 4 个 FDR 显著 unit）</figcaption></figure>
+    <figure class="fig"><img src="results/primary-v2-all/sub-1_ses-2/figures/unit_20_raster_psth.png" alt="sub-1 unit 20 raster/PSTH"><figcaption class="cap">sub-1_ses-2 · unit 20（该 session 0 个显著 unit）</figcaption></figure>
+  </div>
+  <p class="sub" style="margin-top:22px;font-size:15px;">
+    图只用于时间对齐 QC 与结果展示，<b>不代替预先定义的统计检验</b>；每个 session 仅绘制少量代表 unit，在独立的
+    <span class="mono">bci-plot</span> 环境中顺序生成。
+  </p>
+  <div class="foot"><span>08 · 代表性证据</span><span>数值确认后才绘图，绘图不改口径</span></div>
+</section>
+
+<!-- ============ 10 可复现性 ============ -->
+<section class="slide dark">
+  <div class="kicker" style="color:var(--mint);">09 · 可复现性与冻结</div>
+  <h2 style="color:var(--paper);">把「能重跑」做成<span style="color:var(--mint);">制度</span>，而不是愿望</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3 style="color:var(--paper);">📦 三条命令复现全量数值</h3>
+      <p class="mono" style="font-size:13.5px;line-height:2.1;color:rgba(247,244,238,.85);">
+        python scripts/inventory_sessions.py<br>
+        python scripts/run_primary_all.py<br>
+        python scripts/summarize_primary_v2_all.py
+      </p>
+      <p style="margin-top:10px;">conda <span class="mono">bci</span> 环境 · 单进程顺序执行 · 种子 <span class="mono">20260901</span></p>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--paper);">🧊 冻结边界</h3>
+      <p>时间窗、统计方案、结果文件与代表图已固定；历史版本 <span class="mono">primary-v1</span>、<span class="mono">exploratory-v1</span> 全部保留不覆盖。</p>
+      <p style="margin-top:8px;">每个 session 留存：metadata、参数、trial/unit QC、特征表、统计表、SHA-256 清单。</p>
+    </div>
+  </div>
+  <div class="grid3" style="margin-top:22px;">
+    <div class="card"><h3 style="color:var(--paper);">📓 实验日志</h3><p><span class="mono">docs/experiment_log.md</span> 记录每阶段输入、命令、环境、排除原因与验证结论。</p></div>
+    <div class="card"><h3 style="color:var(--paper);">📐 顶层设计</h3><p><span class="mono">docs/project_top_design.md</span> 先于任何数据下载确定研究问题与统计方案。</p></div>
+    <div class="card"><h3 style="color:var(--paper);">🔒 变更规则</h3><p>新假设（ses-1、图片 ID、记忆负荷、脑区）必须开新版本目录，不得改写已冻结结果。</p></div>
+  </div>
+  <div class="foot"><span>09 · 可复现性</span><span>docs/project_freeze_plan.md</span></div>
+</section>
+
+<!-- ============ 11 收获与展望 ============ -->
+<section class="slide">
+  <div class="kicker">10 · 收获与下一步</div>
+  <h2>入门者的<span class="accent">三张成绩单</span>，与一张待办清单</h2>
+  <div class="grid3" style="margin-bottom:24px;">
+    <div class="card"><h3>🧠 神经科学</h3><p>建立了对 unit / spike / 事件对齐 / 基线比较 / FDR 的直觉；理解为什么推断必须以 session 为界，为什么不能随手拼接数据。</p></div>
+    <div class="card"><h3>🐍 PyNWB</h3><p>走完 NWBFile → trials → units → electrodes 的完整读取链路；用 inventory 脚本把「字段存在性」变成分析前的硬检查。</p></div>
+    <div class="card"><h3>🔁 研究工程</h3><p>实践了 src/scripts 分层、版本化结果、审计留痕、环境分离与冻结制度——这些习惯比任何单个 p 值都更值钱。</p></div>
+  </div>
+  <div class="card" style="border-left:4px solid var(--electric);">
+    <h3>🧭 下一步（均需新建结果版本）</h3>
+    <p>
+      <span class="pill blue">适配 ses-1 事件结构</span>
+      <span class="pill green">图片身份 / 记忆负荷探索</span>
+      <span class="pill amber">行为正确率与反应时</span>
+      <span class="pill red">脑区维度效应</span>
+    </p>
+  </div>
+  <div class="foot"><span>10 · 收获与展望</span><span>探索性结果不替代主结论</span></div>
+</section>
+
+<!-- ============ 12 致谢 ============ -->
+<section class="slide dark" style="align-items:center;text-align:center;">
+  <svg width="120" height="120" viewBox="0 0 120 120" style="margin-bottom:26px;">
+    <circle cx="60" cy="60" r="10" fill="#FF5C4D"/>
+    <g stroke="#2E6BFF" stroke-width="2" fill="none" opacity=".8">
+      <circle cx="60" cy="60" r="26"/><circle cx="60" cy="60" r="42" opacity=".5"/><circle cx="60" cy="60" r="56" opacity=".25"/>
+    </g>
+    <g fill="#2E6BFF"><circle cx="60" cy="18" r="3.4"/><circle cx="102" cy="60" r="3.4"/><circle cx="60" cy="102" r="3.4"/><circle cx="18" cy="60" r="3.4"/></g>
+    <g stroke="#FF5C4D" stroke-width="1.6"><path d="M60 50 L60 18 M70 60 L102 60 M60 70 L60 102 M50 60 L18 60"/></g>
+  </svg>
+  <h1 style="color:var(--paper);font-size:56px;">谢谢观看</h1>
+  <p class="sub" style="margin:22px auto 0;max-width:760px;text-align:center;">
+    数据：DANDI 000469（CC BY 4.0，版本 0.240123.1806）· Rutishauser Lab<br>
+    代码与文档：<span class="mono" style="color:var(--amber);">github.com — Reanalysis_DANDI469_NWB</span>
+  </p>
+  <div style="margin-top:34px;display:flex;gap:10px;justify-content:center;">
+    <span class="pill blue">Q &amp; A</span><span class="pill green">结果已冻结 · 欢迎复核</span>
+  </div>
+  <div class="foot"><span>Reanalysis_DANDI469_NWB · 项目汇报</span><span>从 NWB 到 PSTH</span></div>
+</section>
+
+<div class="hint">← → 或 空格 翻页 · P 打印</div>
+<div id="pager">
+  <span id="pageNum">1 / 12</span>
+  <button id="prev" aria-label="上一页">‹</button>
+  <button id="next" aria-label="下一页">›</button>
+</div>
+
+<script>
+/* ---------- 幻灯片导航 ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+const pageNum=document.getElementById('pageNum');
+const progress=document.getElementById('progress');
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  pageNum.textContent=(cur+1)+' / '+slides.length;
+  progress.style.width=((cur+1)/slides.length*100)+'%';
+}
+document.getElementById('prev').onclick=()=>show(cur-1);
+document.getElementById('next').onclick=()=>show(cur+1);
+document.addEventListener('keydown',e=>{
+  if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();show(cur+1);}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(cur-1);}
+  if(e.key==='Home')show(0);
+  if(e.key==='End')show(slides.length-1);
+  if(e.key.toLowerCase()==='p')window.print();
+});
+show(0);
+
+/* ---------- 结果条形图（数据来自 session_summary.csv） ---------- */
+const data=[
+  ['sub-1',0],['sub-2',2],['sub-3',7],['sub-4',5],['sub-5',2],['sub-6',4],['sub-7',0],
+  ['sub-8',17],['sub-9',4],['sub-10',6],['sub-11',14],['sub-12',2],['sub-13',13],['sub-14',9],
+  ['sub-15',1],['sub-16',4],['sub-17',0],['sub-18',10],['sub-19',1],['sub-20',0],['sub-21',0]
+];
+const svg=document.getElementById('barChart');
+const W=1000,H=240,padL=40,padB=34,padT=18,maxV=18;
+const bw=(W-padL-16)/data.length;
+const yScale=v=>(H-padB-padT)*(v/maxV);
+let s='';
+/* 网格与刻度 */
+for(let v=0;v<=maxV;v+=6){
+  const y=H-padB-yScale(v);
+  s+=`<line x1="${padL}" y1="${y}" x2="${W-8}" y2="${y}" stroke="rgba(11,31,58,.08)" stroke-width="1"/>`;
+  s+=`<text x="${padL-8}" y="${y+4}" text-anchor="end" font-size="11" fill="#8A93A6">${v}</text>`;
+}
+data.forEach(([name,v],i)=>{
+  const x=padL+i*bw+bw*0.18, w=bw*0.64;
+  const h=yScale(v), y=H-padB-h;
+  const col=v===0?'#C7CDD9':(v>=10?'#FF5C4D':'#2E6BFF');
+  if(v>0) s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${col}"><title>${name}: ${v} 个显著 unit</title></rect>`;
+  else s+=`<line x1="${x}" y1="${H-padB-1}" x2="${x+w}" y2="${H-padB-1}" stroke="#C7CDD9" stroke-width="2"/>`;
+  s+=`<text x="${x+w/2}" y="${v>0?y-6:H-padB-8}" text-anchor="middle" font-size="12" font-weight="700" fill="${v===0?'#8A93A6':col}">${v}</text>`;
+  s+=`<text x="${x+w/2}" y="${H-padB+16}" text-anchor="middle" font-size="10.5" fill="#8A93A6" transform="rotate(-38 ${x+w/2} ${H-padB+16})">${name.replace('sub-','s')}</text>`;
+});
+/* 图例 */
+s+=`<rect x="${W-262}" y="2" width="11" height="11" rx="2" fill="#FF5C4D"/><text x="${W-246}" y="12" font-size="11.5" fill="#22355A">≥10 个显著 unit</text>`;
+s+=`<rect x="${W-140}" y="2" width="11" height="11" rx="2" fill="#2E6BFF"/><text x="${W-124}" y="12" font-size="11.5" fill="#22355A">1–9 个</text>`;
+s+=`<rect x="${W-64}" y="2" width="11" height="11" rx="2" fill="#C7CDD9"/><text x="${W-48}" y="12" font-size="11.5" fill="#22355A">0 个</text>`;
+svg.innerHTML=s;
+</script>
+</body>
+</html>
