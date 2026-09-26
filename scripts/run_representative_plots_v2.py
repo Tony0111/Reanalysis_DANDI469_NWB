@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -41,12 +40,6 @@ def find_input(input_name: str) -> Path:
 
 
 def main() -> None:
-    conda_prefix = Path(os.environ.get("CONDA_PREFIX", ""))
-    if conda_prefix.name != "bci-plot":
-        raise SystemExit(
-            "Activate the plotting environment first: conda activate bci-plot"
-        )
-
     run_dir = RESULTS_DIR / "plot_runs"
     run_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().astimezone().strftime("%Y%m%d_%H%M%S%z")
@@ -54,7 +47,7 @@ def main() -> None:
 
     with log_path.open("w", encoding="utf-8") as log_file:
         write_line(log_file, f"Python: {sys.executable}")
-        write_line(log_file, f"Conda environment: {conda_prefix}")
+        write_line(log_file, f"Environment prefix: {sys.prefix}")
         write_line(log_file, f"Log: {log_path.resolve()}")
         write_line(log_file, "Sessions: " + ", ".join(session_key(name) for name in SESSION_NAMES))
 

@@ -1,0 +1,23 @@
+[project]
+name = "reanalysis-dandi469-nwb"
+version = "0.1.0"
+description = "DANDI 000469 Sternberg 工作记忆任务人类单神经元 NWB 再分析"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy==2.5.1",
+    "pandas==3.0.3",
+    "scipy==1.18.0",
+    "statsmodels==0.15.0",
+    "matplotlib==3.11.0",
+    "pynwb==4.1.0",
+    "h5py==3.16.0",
+    "nbformat==5.10.4",
+    "nbconvert==7.17.1",
+    "ipykernel==6.30.1",
+    "jupyter-client==8.6.3",
+]
+
+[tool.uv]
+# 这是一个脚本/分析型项目，不需要把 src/ 打包安装进环境。
+package = false

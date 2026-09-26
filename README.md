@@ -4,6 +4,107 @@
 
 项目的主问题是：在每个可兼容 session 内，第一张编码图片出现后，单元放电率是否高于图片出现前的基线。结论必须以 session 为分析边界解释，不能将所有 session 的 trial 或 unit 直接拼接为一个总体检验。
 
+## 怎么读这个仓库（代码导航）
+
+仓库里的文件分两类，用途不同，先分清楚再看具体内容。
+
+### A. 用来阅读、理解分析流程的（不产生正式结果）
+
+| 文件 | 作用 |
+|---|---|
+| `single-session-baseline/read_data.ipynb` | **推荐入口**。单 session（`sub-20_ses-2`）逐步教学版：从打开 NWB、结构检查、trial/unit QC、窗口特征到置换检验和画图，每一步都有中文讲解 |
+| `docs/project_top_design.md` | 研究问题、变量、QC、统计和可复现性的顶层设计 |
+| `docs/multi_session_analysis_plan.md` | 多 session 工作计划与实际执行记录 |
+| `docs/experiment_log.md` | 按时间记录的输入、命令、环境和排除原因 |
+| `docs/project_freeze_plan.md` | 冻结范围与验收条件 |
+
+### B. 真正处理数据的（产生 `results/` 中的正式结果）
+
+| 文件 | 作用 |
+|---|---|
+| `src/sternberg_primary.py` | **分析的规范实现**：QC、窗口特征、置换检验、bootstrap、FDR |
+| `src/data_paths.py` | 统一定位 NWB 输入目录 |
+| `scripts/inventory_sessions.py` | 扫描 NWB、生成 session inventory |
+| `scripts/run_primary_all.py` | 批量跑全部兼容 session（写 `primary-v2-all`） |
+| `scripts/run_one_session.py` | 跑单个 session |
+| `scripts/summarize_primary_v2_all.py` | 汇总为主结果表 |
+| `scripts/plot_session_qc.py`、`scripts/run_representative_plots*.py` | 代表性 raster/PSTH QC 图 |
+| `scripts/inventory_encoding1_picids.py`、`scripts/run_encoding1_picid_exploration.py` | 探索性图片 ID 分析 |
+
+### `read_data.ipynb` 与 `src/` 的关系（重要）
+
+- `read_data.ipynb` 为了教学，把整套分析逻辑**完整内联**写在 cell 里，**不 import `src/`**；它是 `src/sternberg_primary.py` 的原始单 session 版本。
+- `src/sternberg_primary.py` 是**规范实现**，也是真正生成 `results/` 的代码。目前二者的窗口、随机种子、置换/Bootstrap 次数和 FDR 规则全部一致；`sub-20` 的数值逐位相同（notebook 写出的 `unit_level_statistics.csv` 与 `results/primary-v2-all/sub-20_ses-2/` 中的同名文件一致，只是显示精度不同）。
+- 因为它们是两份平行实现，**修改 `src/` 不会自动改变 notebook**。若发现差异，以 `src/` 为准。
+
+## 数据集与实验背景
+
+### 数据从哪来
+
+- **数据集**：DANDI 000469 *Human Single Neuron Recordings During a Working Memory Task*，由 Rutishauser 实验室公开发布（DANDI 上的 ID 为 `000469`）。
+- **发布版本**：`0.240123.1806`；访问级别 OpenAccess；许可 **CC BY 4.0**。
+- **数据论文**：<https://pmc.ncbi.nlm.nih.gov/articles/PMC10796636/>；**官方发布代码**：<https://github.com/rutishauserlab/workingmem-release-NWB>。
+- **规模**：21 名受试者、41 个 NWB session 文件、约 1,809 个 units，总量约 9.8 GB。本项目使用的副本位于 `raw/all/000469/`，每个文件约 25–616 MB。
+- **受试者与记录**：受试者为因临床需要而植入颅内微丝电极的患者，记录的是**人类单神经元 spike**（不是动物数据，也不是头皮 EEG/fMRI）。记录脑区以 `electrodes.location` / `electrode_groups[].location` 为准，涵盖内侧颞叶（MTL，如海马、杏仁核）及部分运动/前运动、扣带等区域。
+- **本项目是二次分析**：不采集数据、不重新做 spike sorting，只使用发布版 NWB 中已经整理好的 trials 和 units。
+
+### 实验是怎么做的
+
+范式是 **Sternberg 工作记忆任务**：先记住一组图片，随后判断 probe 图片是否属于刚才记住的那组。
+
+- 每个受试者有两个 session：
+  - `ses-1`（screening，标识前缀 `SCID`）：筛查任务，用来挑选对该受试者神经反应较强的图片。
+  - `ses-2`（Sternberg，标识前缀 `SBID`）：正式工作记忆任务，图片来自 screening 的结果。
+- **刺激是图片**。`loads` 字段表示本 trial 的记忆负荷（本数据集中取 1/2/3，即呈现 1–3 张编码图片）；每张图片的 ID 保存在 `loadsEnc1_PicIDs`、`loadsEnc2_PicIDs`、`loadsEnc3_PicIDs`、`loadsProbe_PicIDs`。
+- 单个 trial 的时间线（以 `sub-20_ses-2` 第一个 trial 为例，单位秒）：
+
+| 阶段 | trial 字段 | 示例时间 |
+|---|---|---:|
+| 注视 fixation | `timestamps_FixationCross` | 19.34 |
+| 第一张编码图片出现 | `timestamps_Encoding1` | 20.38 |
+| 第一张编码图片结束 | `timestamps_Encoding1_end` | 21.40 |
+| 第二张编码图片 | `timestamps_Encoding2` / `_end` | 21.60 |
+| 第三张编码图片 | `timestamps_Encoding3` / `_end` | 22.75 |
+| 保持期开始 | `timestamps_Maintenance` | 23.77 |
+| probe 出现 | `timestamps_Probe` | 26.40 |
+| 受试者反应 | `timestamps_Response` | 27.12 |
+
+- 行为结果存在 `response_accuracy`（0/1）和 `probe_in_out`（probe 是否在记忆集合内）。
+- 原始 TTL marker 另外保存在 acquisition 的 `events` TimeSeries 中（例如 11=注视、1/2/3=第 1/2/3 张图、6=保持期开始、7=probe、8=反应）；本项目主要使用 trials 表中已整理好的事件列。
+- **重要限制**：Sternberg 用的图片本身是 screening 阶段按神经反应挑出来的，因此结果带有选择偏差，不能直接解释成普通人群中的视觉选择性或“概念细胞”比例。
+
+### 收集到的数据是什么样（已预处理）
+
+本数据集是**已经预处理过的发布版本**，而不是原始宽带电压：
+
+- 项目直接使用 `units.spike_times`（已完成 spike sorting），**不重新 sorting、不做滤波、不做 LFP/相位分析**。
+- 文件中没有需要本项目处理的连续电压信号；`processing` 组为空。有用信息集中在 `acquisition.events`、`trials`、`units`、`electrodes`、`electrode_groups` 和 `devices`。
+- 因此这里的“原始数据”指的是发布版 NWB 文件本身，不是电极记录到的原始信号。
+
+### NWB 数据结构
+
+每个 `*_ecephys+image.nwb` 是一份 NWB 2.x 文件，结构如下：
+
+| 组 / 表 | 内容 |
+|---|---|
+| `session_description` / `identifier` / `session_start_time` | 受试者编号、全局标识（`SBID_*` 为 Sternberg，`SCID_*` 为 screening）、session 起始时间 |
+| `subject` | 受试者信息 |
+| `devices` / `electrode_groups` | 记录设备与电极组；`electrode_groups[].location` 记录脑区 |
+| `electrodes` | 电极表：`x, y, z, location, filtering, group, group_name, origChannel` |
+| `acquisition.events` | TTL 事件时间序列（TimeSeries） |
+| `trials` | 每行一个 trial，含事件时间戳、记忆负荷、图片 ID 和行为字段（本数据集共 19 列） |
+| `units` | 每行一个已排序 unit：`spike_times`、`electrodes`、`clusterID_orig`，以及波形质量指标 `waveforms_mean_snr`、`waveforms_peak_snr`、`waveforms_isolation_distance`、`waveforms_mean_proj_dist` |
+| `processing` | 本数据集为空 |
+
+关键字段映射：主分析的对齐事件是 `trials.timestamps_Encoding1`（第一张编码图片 onset）；`units.electrodes` 通过 `electrodes.location` 关联到脑区。完整的实际字段清单见 `single-session-baseline/data_dictionary.json`。
+
+### 数据集层级与 session 兼容性
+
+- `raw/all/000469/` 下共 41 个文件：**20 个 `ses-1`（screening）+ 21 个 `ses-2`（Sternberg）**。
+- 只有 21 个 `ses-2` 文件同时具备 `timestamps_FixationCross`、`timestamps_Encoding1`、`timestamps_Encoding1_end` 三个字段，它们是当前主分析的输入。
+- 20 个 `ses-1` 文件缺少这三个字段，不能在不改变事件定义的前提下套用本主分析，因此在数值分析前被**明确排除并留下审计记录**，而不是静默跳过。
+- 文件命名规则为 `sub-<subject>_ses-<session>_ecephys+image.nwb`，一个文件对应一次 session。
+
 ## 当前状态
 
 - 原始全量数据：41 个 NWB 文件，位于 `raw/all/000469/`。
@@ -28,7 +129,57 @@
 | 随机种子 | `20260901` |
 | 数据汇总限制 | 不跨 session 合并 trial；不将 unit 当作独立受试者做总体推断 |
 
-主分析不导入 Matplotlib。数值结果确认后，才在单独的 `bci-plot` 环境中为少量代表性 unit 生成 raster/PSTH，图只用于时间对齐 QC 和结果展示，不代替预先定义的统计检验。
+主分析不导入 Matplotlib。数值结果确认后，才在项目 uv 环境（`.venv`）中为少量代表性 unit 生成 raster/PSTH，图只用于时间对齐 QC 和结果展示，不代替预先定义的统计检验。
+
+## 分析流程（从 NWB 到结果）
+
+整体原则：`src/` 只实现“如何分析”，`scripts/` 决定“对哪些文件、按什么顺序、把结果写到哪里”。完整链条如下。
+
+### 步骤 1：扫描与结构盘点 — `scripts/inventory_sessions.py`
+
+- 打开每个 NWB，读取 `trials`、`units`、`electrodes`，记录行数、文件大小、SHA-256、subject/session 标识，以及关键字段是否存在。
+- 计算 `primary_schema_compatible`：必须同时有 Encoding1 三件套事件字段、`units.spike_times`、`units.electrodes` 和 `electrodes.location`。
+- 输出 `results/primary-v2-all/session_inventory.csv`。这一步决定哪些 session 进入主分析，是后续所有批处理的入口。
+
+### 步骤 2：单 session 数值主分析 — `src/sternberg_primary.py`（由 `scripts/run_one_session.py` / `run_primary_all.py` 调用）
+
+对每个兼容 session 依次完成：
+
+1. 读取 NWB，取 `trials`、`units`、`electrodes`。
+2. 字段映射：`timestamps_Encoding1` → 对齐零点；`units.spike_times` → spike 时间；`units.electrodes` → 脑区。
+3. **trial QC**：检查事件时间是否为有限实数、顺序是否合理、基线窗 `[-0.8, 0.0)` 和反应窗 `[0.2, 1.0)` 是否落在可用记录范围内。
+4. **unit QC**：检查 `spike_times` 是否有限且单调递增、活跃 trial 数、ISI 等边界。
+5. **计算特征**：对每个保留的 `unit × trial`，统计基线窗和反应窗的 spike count，换算成放电率 Hz（窗长 0.8 s），得到差值 `response_rate − baseline_rate`。
+6. **统计检验（unit 内）**：10,000 次单尾配对置换检验，备择为图片后放电率更高；5,000 次 bootstrap 置信区间。
+7. **多重比较**：只在同一 session 内做 BH-FDR，阈值 `q < 0.05`。
+8. 输出到 `results/primary-v2-all/sub-*_ses-2/`：`trial_qc.csv`、`unit_qc.csv`、`unit_trial_features.csv`、`final_count_qc.csv`、`unit_level_statistics.csv`、`session_metadata.json`、`analysis_parameters.json`。
+
+- `run_one_session.py --input <nwb> --output <dir>` 跑单个 session；
+- `run_primary_all.py` 按 inventory 顺序批量跑，把不兼容或失败的 session 写进 `session_run_log.csv`、`session_failures.csv` 和 `session_failures/*/failure.json`；
+- 每个 session 使用同一套固定参数（时间窗、随机种子 `20260901`、置换/Bootstrap 次数、FDR 阈值）。
+
+### 步骤 3：汇总 — `scripts/summarize_primary_v2_all.py`
+
+- 读取所有完成 session 的 `unit_level_statistics.csv` 和 `session_metadata.json`。
+- 生成 `session_summary.csv`（每个 session 的 trial/unit/显著 unit/效应描述）、`subject_level_descriptive_summary.csv`（按 subject 并列，仅描述）、`unit_statistics_all_sessions.csv`（纵向 unit 表）和 `descriptive_summary.md`。
+- 汇总只描述数据规模，**不跨 session 合并 trial，也不做跨受试者总体检验**。
+
+### 步骤 4：时间对齐 QC 绘图 — `scripts/plot_session_qc.py`（由 `run_representative_plots*.py` 顺序调用）
+
+- 用与主分析相同的 `build_trial_qc` 取保留 trial 的 onset，对少量代表性 unit 画 raster + PSTH（bin = 50 ms），并标出基线和反应窗。
+- 输出 `figures/unit_*_raster_psth.png`，**仅用于确认事件对齐没有系统性错误，不参与统计**。
+- `run_representative_plots_v2.py` 只处理 `primary-v2-all` 中选定的 3 个 session；`run_representative_plots.py` 是 `primary-v1` 的历史入口。两者顺序执行、遇到第一个失败即停止，并保留运行日志。
+
+### 步骤 5：探索性图片 ID 分析（与主分析分离）
+
+- `scripts/inventory_encoding1_picids.py`：统计 4 个 session 中第一张编码图片 ID 的重复情况，输出到 `results/primary-v1/exploratory_precheck/`。
+- `scripts/run_encoding1_picid_exploration.py`：用训练/测试划分检验 unit 反应是否与图片身份有关，输出到 `results/exploratory-v1/encoding1_picid_train_test/`。
+- 这一支单独成目录，结果**不得替代** `primary-v2-all/` 的主分析结论。
+
+### 单 session 教学基线
+
+- `single-session-baseline/read_data.ipynb` 以 `sub-20_ses-2` 为例，逐步演示“读 NWB → 结构检查 → trial/unit QC → 特征 → 统计 → 可视化”，用于学习与回归测试。
+- `data_dictionary.json` 保存该 session 的字段映射与结构检查摘要。
 
 ## 结论
 
@@ -98,7 +249,10 @@ Reanalysis_DANDI469_NWB/
 |   |-- experiment_log.md                 输入、命令、环境、排除和验证的时间序列日志
 |   `-- project_freeze_plan.md            冻结范围、验收条件和后续变更规则
 |
-|-- requirements.txt                      运行所需 Python 依赖
+|-- pyproject.toml                        uv 项目定义与顶层依赖
+|-- uv.lock                               完整锁定依赖版本（uv sync 使用）
+|-- .python-version                        指定 Python 3.12
+|-- requirements.txt                      等价的人类可读依赖清单
 |-- .gitignore                            排除 raw 数据、NWB、缓存和本地临时文件
 `-- README.md                             本说明
 ```
@@ -185,26 +339,35 @@ scripts/summarize_primary_v2_all.py
 
 `results/exploratory-v1/encoding1_picid_train_test/` 保存独立于主分析的图片身份探索。每个 session 的 `trial_split.csv` 记录训练/测试切分，`unit_picture_identity_statistics.csv` 记录图片 ID 统计；顶层 `session_summary.csv`、`unit_picture_identity_statistics_all_sessions.csv` 和 `exploratory_summary.md` 提供汇总。该目录中的发现不得替代 `primary-v2-all/` 的主分析结论。
 
-## 复现全量主分析
+## 环境（uv）
 
-数值处理在 `bci` 环境完成。一次只运行一个 Python 分析进程；不要同时启动多个批处理脚本。
+项目使用 [uv](https://docs.astral.sh/uv/) 管理 Python 环境。依赖的顶层约束见 `pyproject.toml`，完整锁定版本见 `uv.lock`；`requirements.txt` 保留为等价的人类可读清单。首次克隆或换机后，在项目根目录执行：
 
 ```powershell
-conda activate bci
-cd E:\BCI-workstation\NWB
-python .\Reanalysis_DANDI469_NWB\scripts\inventory_sessions.py
-python .\Reanalysis_DANDI469_NWB\scripts\run_primary_all.py
-python .\Reanalysis_DANDI469_NWB\scripts\summarize_primary_v2_all.py
+cd E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB
+uv sync
+```
+
+之后可用 `uv run python scripts\<script>.py` 运行脚本，无需手动激活虚拟环境；也可以 `source .venv/Scripts/activate` 后再用普通 `python`。
+
+## 复现全量主分析
+
+数值处理在项目 uv 环境中完成。一次只运行一个 Python 分析进程；不要同时启动多个批处理脚本。
+
+```powershell
+cd E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB
+uv run python scripts\inventory_sessions.py
+uv run python scripts\run_primary_all.py
+uv run python scripts\summarize_primary_v2_all.py
 ```
 
 运行前应先检查 `results/primary-v2-all/session_inventory.csv`；只有具有固定 Encoding1 事件定义的 session 才能进入当前主流程。某个 session 若失败，`run_primary_all.py` 会在 `session_run_log.csv`、`session_failures.csv` 和对应 `failure.json` 中记录原因，不会静默跳过。
 
-数值结果确认无误后，才在 `bci-plot` 环境中运行少量代表性绘图：
+数值结果确认无误后，才运行少量代表性绘图（与数值分析使用同一个 uv 环境）：
 
 ```powershell
-conda activate bci-plot
-cd E:\BCI-workstation\NWB
-python .\Reanalysis_DANDI469_NWB\scripts\run_representative_plots_v2.py
+cd E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB
+uv run python scripts\run_representative_plots_v2.py
 ```
 
 该绘图入口顺序处理选定 session 中的少量 unit；不要改造成一次生成所有 unit 的大型 raster/PSTH 图。
@@ -214,11 +377,17 @@ python .\Reanalysis_DANDI469_NWB\scripts\run_representative_plots_v2.py
 `single-session-baseline/read_data.ipynb` 优先使用全量目录中的 canonical 文件 `sub-20_ses-2_ecephys+image.nwb`，仅在完整数据目录不存在时回退至 `raw/pilot-legacy/`。在项目根目录执行：
 
 ```powershell
-conda activate bci
-jupyter nbconvert --to notebook --execute --inplace .\single-session-baseline\read_data.ipynb
+cd E:\BCI-workstation\NWB\Reanalysis_DANDI469_NWB
+uv run jupyter nbconvert --to notebook --execute --inplace .\single-session-baseline\read_data.ipynb
 ```
 
-notebook 的新输出会写回 `single-session-baseline/`，因此运行前应确认自己需要更新该教学/回归基线。
+notebook 的新输出会写回 `single-session-baseline/`（`data_dictionary.json` 和 `unit_level_statistics.csv`），因此运行前应确认自己需要更新该教学/回归基线。
+
+notebook 的 kernel 元数据已指向 uv 环境（kernel 名 `reanalysis-dandi469-nwb`）。如果在新机器上该 kernel 尚未注册，先执行：
+
+```powershell
+uv run python -m ipykernel install --user --name reanalysis-dandi469-nwb --display-name "Reanalysis DANDI469 (uv .venv)"
+```
 
 ## 文档与变更规则
 
